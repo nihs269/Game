@@ -1,0 +1,69 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Bói Tarot</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🔮</text></svg>">
+  <link rel="stylesheet" href="/static/platform.css">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <button id="btn-leave" class="icon-btn" title="Rời phòng">←</button>
+    <div class="brand">🔮 Bói Tarot</div>
+    <button id="btn-room" class="room-chip" title="Sao chép link mời">Phòng <b id="room-code">····</b> <span class="copy">⧉</span></button>
+    <div class="spacer"></div>
+    <div id="phase-pill" class="phase-pill"></div>
+    <div id="timer" class="timer" hidden></div>
+    <button id="btn-sound" class="icon-btn" title="Bật/tắt âm thanh">🔈</button>
+    <button id="btn-guide" class="icon-btn" title="Hướng dẫn chơi">❓</button>
+    <div id="conn" class="conn" title="Kết nối"></div>
+  </header>
+  <div class="timebar"><div id="timebar-fill"></div></div>
+
+  <main class="layout">
+    <section class="stage">
+      <div id="audience" class="audience"></div>
+      <div id="bar" class="bar"></div>
+      <div id="board" class="board">
+        <div class="stars"></div>
+        <div id="board-head" class="board-head"></div>
+        <div id="board-main" class="board-main"></div>
+        <div id="fan" class="fan"></div>
+      </div>
+      <div id="host-cfg"></div>
+      <div id="reading" class="reading"></div>
+      <div id="emotes" class="emote-bar"></div>
+    </section>
+
+    <aside class="side">
+      <nav class="tabs">
+        <button data-tab="chat" class="active">💬 Trò chuyện <span id="unread" class="unread" hidden></span></button>
+        <button data-tab="history">📜 Lịch sử</button>
+        <button data-tab="deck">📚 Bộ bài</button>
+        <button data-tab="rules">📖 Cách chơi</button>
+      </nav>
+      <div class="tab-body" data-body="chat">
+        <div id="chat-list" class="chat-list"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" maxlength="300" autocomplete="off" placeholder="Nhập tin nhắn…">
+          <button class="gh-btn primary small" type="submit">Gửi</button>
+        </form>
+      </div>
+      <div class="tab-body" data-body="history" hidden><div id="history-list" class="log-list"></div></div>
+      <div class="tab-body" data-body="deck" hidden>
+        <div id="deck-filter" class="deck-filter"></div>
+        <div id="deck-list" class="deck-list"></div>
+      </div>
+      <div class="tab-body" data-body="rules" hidden><div id="rules" class="rules"></div></div>
+    </aside>
+  </main>
+
+  <script src="/static/platform.js"></script>
+  <script src="/static/avatar.js"></script>
+  <script src="/static/guide.js"></script>
+  <script src="/static/chatbubble.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

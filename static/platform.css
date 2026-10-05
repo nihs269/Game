@@ -1,0 +1,164 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --bg: #0f1024;
+  --bg-2: #171936;
+  --panel: rgba(28, 30, 64, 0.78);
+  --panel-solid: #1d1f42;
+  --line: rgba(255, 255, 255, 0.09);
+  --text: #eceaf8;
+  --muted: #a3a1c4;
+  --accent: #8b7bff;
+  --accent-2: #b3a8ff;
+  --good: #3ecf8e;
+  --bad: #ff5d6c;
+  --warn: #ffb547;
+  --radius: 16px;
+  --shadow: 0 10px 40px rgba(0, 0, 0, 0.35);
+  --font: 'Be Vietnam Pro', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+}
+
+* { box-sizing: border-box; }
+html, body { margin: 0; padding: 0; }
+body {
+  font-family: var(--font);
+  color: var(--text);
+  background: var(--bg);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+button, input, select { font-family: inherit; }
+
+.gh-btn {
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  padding: 11px 18px; border-radius: 12px; border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06); color: var(--text);
+  font-size: 15px; font-weight: 600; cursor: pointer;
+  transition: transform .12s ease, background .2s ease, box-shadow .2s ease, opacity .2s;
+}
+.gh-btn:hover { background: rgba(255, 255, 255, 0.11); }
+.gh-btn:active { transform: scale(0.97); }
+.gh-btn:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+.gh-btn.primary {
+  background: linear-gradient(135deg, #8b7bff, #6a5cff); border-color: transparent;
+  box-shadow: 0 6px 20px rgba(107, 92, 255, 0.35); color: #fff;
+}
+.gh-btn.primary:hover { background: linear-gradient(135deg, #9a8cff, #7a6dff); }
+.gh-btn.danger { background: linear-gradient(135deg, #ff6b7a, #e0435a); border-color: transparent; color: #fff; }
+.gh-btn.good { background: linear-gradient(135deg, #42d69a, #22a870); border-color: transparent; color: #fff; }
+.gh-btn.ghost { background: transparent; }
+.gh-btn.small { padding: 7px 12px; font-size: 13px; border-radius: 10px; }
+
+.gh-input {
+  width: 100%; padding: 12px 14px; border-radius: 12px;
+  border: 1px solid var(--line); background: rgba(0, 0, 0, 0.25);
+  color: var(--text); font-size: 16px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+}
+.gh-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px rgba(139, 123, 255, 0.25); }
+.gh-muted { color: var(--muted); }
+
+.shake { animation: gh-shake .35s; }
+@keyframes gh-shake { 25% { transform: translateX(-6px); } 75% { transform: translateX(6px); } }
+
+/* toast */
+.gh-toasts {
+  position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%);
+  display: flex; flex-direction: column; gap: 8px; z-index: 1000; pointer-events: none;
+  width: min(92vw, 420px);
+}
+.gh-toast {
+  padding: 12px 16px; border-radius: 12px; background: var(--panel-solid);
+  border: 1px solid var(--line); box-shadow: var(--shadow); font-size: 14px;
+  animation: gh-in .25s ease; transition: opacity .35s, transform .35s; text-align: center;
+}
+.gh-toast.error { border-color: rgba(255, 93, 108, .5); background: #3a1830; }
+.gh-toast.good { border-color: rgba(62, 207, 142, .5); background: #143a2d; }
+.gh-toast.out { opacity: 0; transform: translateY(8px); }
+@keyframes gh-in { from { opacity: 0; transform: translateY(10px); } }
+
+/* modal */
+.gh-modal-wrap {
+  position: fixed; inset: 0; background: rgba(5, 5, 20, 0.7); backdrop-filter: blur(6px);
+  display: flex; align-items: center; justify-content: center; z-index: 900; padding: 16px;
+  animation: gh-fade .2s ease;
+}
+.gh-modal {
+  width: min(440px, 100%); background: var(--panel-solid); border: 1px solid var(--line);
+  border-radius: 20px; padding: 24px; box-shadow: var(--shadow); animation: gh-pop .25s ease;
+}
+.gh-modal h2 { margin: 0 0 12px; font-size: 21px; }
+.gh-modal-body p { line-height: 1.55; }
+.gh-modal-actions { display: flex; gap: 10px; justify-content: flex-end; margin-top: 18px; flex-wrap: wrap; }
+@keyframes gh-fade { from { opacity: 0; } }
+@keyframes gh-pop { from { opacity: 0; transform: scale(.94) translateY(10px); } }
+
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, .15); border-radius: 8px; }
+
+/* ---------- Nhân vật (avatar.js) ---------- */
+.av-svg { display: block; width: 100%; height: auto; overflow: visible; }
+.av-ec, .av-ew, .av-mo, .av-md, .av-tears { display: none; }
+.av-arm { transform-box: view-box; transition: transform .35s cubic-bezier(.3, 1.4, .5, 1); }
+.av-arm-l { transform-origin: 26px 77px; }
+.av-arm-r { transform-origin: 74px 77px; }
+.av-body { transform-box: view-box; transform-origin: 50px 140px; }
+.av-head { transform-box: view-box; transform-origin: 50px 70px; }
+
+.av-editor { display: grid; grid-template-columns: 170px 1fr; gap: 16px; align-items: start; }
+.av-preview { display: flex; flex-direction: column; align-items: center; gap: 10px; }
+.av-stage {
+  width: 150px; padding: 10px 10px 4px; border-radius: 18px;
+  background: radial-gradient(circle at 50% 80%, rgba(255, 150, 60, .35), transparent 70%), rgba(0, 0, 0, .25);
+}
+.av-stage .av-body { animation: av-idle 3s ease-in-out infinite; }
+@keyframes av-idle { 50% { transform: translateY(-2px) scaleY(1.01); } }
+.av-cats { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 12px; }
+.av-cats button {
+  padding: 6px 11px; border-radius: 99px; border: 1px solid var(--line); background: rgba(255, 255, 255, .05);
+  color: var(--muted); font-size: 13px; font-weight: 600; cursor: pointer;
+}
+.av-cats button.on { background: var(--accent); color: #fff; border-color: transparent; }
+.av-opts { display: grid; gap: 8px; }
+.av-opts.style { grid-template-columns: repeat(auto-fill, minmax(76px, 1fr)); }
+.av-opts.color { grid-template-columns: repeat(auto-fill, 38px); }
+.av-thumb {
+  display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 6px 4px 6px; border-radius: 12px;
+  border: 2px solid transparent; background: rgba(0, 0, 0, .22); color: var(--muted); font-size: 11px; cursor: pointer;
+}
+.av-thumb .av-svg { width: 56px; height: 64px; }
+.av-thumb.on { border-color: var(--accent); color: var(--text); background: rgba(139, 123, 255, .18); }
+.av-swatch {
+  width: 38px; height: 38px; border-radius: 50%; border: 3px solid rgba(255, 255, 255, .15); background: var(--c); cursor: pointer;
+}
+.av-swatch.on { border-color: #fff; box-shadow: 0 0 0 3px var(--accent); }
+@media (max-width: 560px) {
+  .av-editor { grid-template-columns: 1fr; }
+  .av-stage { width: 120px; }
+}
+
+/* ---------- Hướng dẫn chơi (guide.js) ---------- */
+.gh-modal.gd-modal { width: min(640px, 100%); max-height: calc(100vh - 32px); overflow-y: auto; }
+.gd-meta { font-size: 12px; font-weight: 700; color: var(--accent-2); }
+.gd-desc { margin: 6px 0 4px; color: var(--muted); }
+.gd-sec { margin-top: 14px; padding: 12px 14px; border-radius: 14px; background: rgba(255, 255, 255, 0.04); border: 1px solid var(--line); }
+.gd-sec h3 { margin: 0 0 6px; font-size: 15px; }
+.gd-sec p, .gd-sec li { margin: 0; font-size: 14px; line-height: 1.6; }
+.gd-sec ul { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 4px; }
+.gd-sec b { color: #fff; }
+.gd-common { background: rgba(139, 123, 255, 0.08); }
+
+/* ---------- Bong bóng thoại khi chat (chatbubble.js) ---------- */
+.gh-say-layer { position: fixed; inset: 0; pointer-events: none; z-index: 600; }
+.gh-say {
+  position: fixed; width: max-content; max-width: 200px; padding: 7px 11px; border-radius: 14px;
+  background: #fff; color: #1d1d2e; font-size: 13px; font-weight: 600; line-height: 1.35;
+  white-space: normal; overflow-wrap: anywhere; box-shadow: 0 6px 18px rgba(0, 0, 0, .3);
+  transform: translate(-50%, -100%) scale(0); transform-origin: 50% 100%; opacity: 0;
+  transition: transform .25s cubic-bezier(.3, 1.5, .5, 1), opacity .2s;
+}
+.gh-say::after {
+  content: ''; position: absolute; top: 100%; left: calc(50% + var(--tip, 0px)); margin-left: -7px;
+  border: 7px solid transparent; border-top-color: #fff;
+}
+.gh-say.show { transform: translate(-50%, -100%) scale(1); opacity: 1; }

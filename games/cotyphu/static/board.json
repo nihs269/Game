@@ -1,0 +1,242 @@
+{
+  "groups": {
+    "tb": {
+      "name": "Tây Bắc",
+      "color": "#8d6e63"
+    },
+    "db": {
+      "name": "Đông Bắc",
+      "color": "#e53935"
+    },
+    "tn": {
+      "name": "Tây Nguyên",
+      "color": "#43a047"
+    },
+    "btb": {
+      "name": "Bắc Trung Bộ",
+      "color": "#fb8c00"
+    },
+    "ntb": {
+      "name": "Nam Trung Bộ",
+      "color": "#8e24aa"
+    },
+    "mt": {
+      "name": "Miền Tây",
+      "color": "#546e7a"
+    },
+    "dbsh": {
+      "name": "Đồng bằng sông Hồng",
+      "color": "#1e88e5"
+    },
+    "dnb": {
+      "name": "Đông Nam Bộ",
+      "color": "#d81b60"
+    }
+  },
+  "squares": [
+    {
+      "type": "start",
+      "name": "Xuất phát",
+      "icon": "🏁"
+    },
+    {
+      "type": "city",
+      "group": "tb",
+      "name": "Điện Biên",
+      "icon": "🎖️",
+      "price": 60
+    },
+    {
+      "type": "city",
+      "group": "tb",
+      "name": "Sơn La",
+      "icon": "⛰️",
+      "price": 70
+    },
+    {
+      "type": "city",
+      "group": "tb",
+      "name": "Lào Cai",
+      "icon": "🚂",
+      "price": 80
+    },
+    {
+      "type": "resort",
+      "name": "Sầm Sơn",
+      "icon": "🏖️",
+      "price": 180
+    },
+    {
+      "type": "city",
+      "group": "db",
+      "name": "Cao Bằng",
+      "icon": "💧",
+      "price": 100
+    },
+    {
+      "type": "city",
+      "group": "db",
+      "name": "Lạng Sơn",
+      "icon": "🏯",
+      "price": 110
+    },
+    {
+      "type": "city",
+      "group": "db",
+      "name": "Thái Nguyên",
+      "icon": "🍵",
+      "price": 120
+    },
+    {
+      "type": "island",
+      "name": "Lost Island",
+      "icon": "🏝️"
+    },
+    {
+      "type": "city",
+      "group": "tn",
+      "name": "Kon Tum",
+      "icon": "🌲",
+      "price": 140
+    },
+    {
+      "type": "city",
+      "group": "tn",
+      "name": "Pleiku",
+      "icon": "🌋",
+      "price": 150
+    },
+    {
+      "type": "city",
+      "group": "tn",
+      "name": "Buôn Ma Thuột",
+      "icon": "☕",
+      "price": 160
+    },
+    {
+      "type": "chance",
+      "name": "Cơ hội",
+      "icon": "🎴"
+    },
+    {
+      "type": "city",
+      "group": "btb",
+      "name": "Vinh",
+      "icon": "🌾",
+      "price": 180
+    },
+    {
+      "type": "resort",
+      "name": "Mỹ Khê",
+      "icon": "🌊",
+      "price": 180
+    },
+    {
+      "type": "city",
+      "group": "btb",
+      "name": "Huế",
+      "icon": "🏯",
+      "price": 200
+    },
+    {
+      "type": "champ",
+      "name": "World Championships",
+      "icon": "🏆"
+    },
+    {
+      "type": "city",
+      "group": "ntb",
+      "name": "Quy Nhơn",
+      "icon": "🐟",
+      "price": 220
+    },
+    {
+      "type": "resort",
+      "name": "Nha Trang",
+      "icon": "🐚",
+      "price": 180
+    },
+    {
+      "type": "city",
+      "group": "ntb",
+      "name": "Đà Nẵng",
+      "icon": "🌉",
+      "price": 240
+    },
+    {
+      "type": "chance",
+      "name": "Cơ hội",
+      "icon": "🎴"
+    },
+    {
+      "type": "city",
+      "group": "mt",
+      "name": "Cà Mau",
+      "icon": "🦀",
+      "price": 260
+    },
+    {
+      "type": "city",
+      "group": "mt",
+      "name": "Rạch Giá",
+      "icon": "⛵",
+      "price": 270
+    },
+    {
+      "type": "city",
+      "group": "mt",
+      "name": "Cần Thơ",
+      "icon": "🛶",
+      "price": 290
+    },
+    {
+      "type": "tour",
+      "name": "World Tour",
+      "icon": "✈️"
+    },
+    {
+      "type": "resort",
+      "name": "Vũng Tàu",
+      "icon": "⛱️",
+      "price": 180
+    },
+    {
+      "type": "city",
+      "group": "dbsh",
+      "name": "Hải Phòng",
+      "icon": "⚓",
+      "price": 310
+    },
+    {
+      "type": "city",
+      "group": "dbsh",
+      "name": "Hà Nội",
+      "icon": "🏛️",
+      "price": 330
+    },
+    {
+      "type": "chance",
+      "name": "Cơ hội",
+      "icon": "🎴"
+    },
+    {
+      "type": "city",
+      "group": "dnb",
+      "name": "Biên Hòa",
+      "icon": "🏭",
+      "price": 350
+    },
+    {
+      "type": "tax",
+      "name": "Tax",
+      "icon": "🧾"
+    },
+    {
+      "type": "city",
+      "group": "dnb",
+      "name": "TP.HCM",
+      "icon": "🏙️",
+      "price": 380
+    }
+  ]
+}

@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Game Hub</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎲</text></svg>">
+  <link rel="stylesheet" href="/static/platform.css">
+  <link rel="stylesheet" href="/static/lobby.css">
+</head>
+<body>
+  <div class="bg-glow"></div>
+  <aside id="online" class="online" aria-label="Người đang hoạt động">
+    <button id="online-toggle" class="ol-head" title="Thu gọn / mở rộng">
+      <span class="dot"></span>Đang hoạt động <b id="online-count">0</b><span class="chev">▾</span>
+    </button>
+    <div id="online-list" class="ol-list"></div>
+  </aside>
+  <main class="wrap">
+    <header class="hero">
+      <div class="logo">🎲</div>
+      <div>
+        <h1>Game Hub</h1>
+        <p class="gh-muted">Chọn game, tạo phòng và gửi mã cho bạn bè để cùng chơi.</p>
+      </div>
+    </header>
+
+    <section class="card me-card">
+      <label for="name">Tên của bạn</label>
+      <div class="row">
+        <input id="name" class="gh-input" maxlength="20" placeholder="VD: Nam đẹp trai" autocomplete="off">
+      </div>
+      <div id="lan" class="lan"></div>
+    </section>
+
+    <section class="card char-card">
+      <h2>🧍 Nhân vật của bạn</h2>
+      <div id="avatar-editor"></div>
+    </section>
+
+    <section class="card join-card">
+      <h2>Vào phòng bằng mã</h2>
+      <form id="join-form" class="row">
+        <input id="code" class="gh-input code-input" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters">
+        <button class="gh-btn primary" type="submit">Vào phòng</button>
+      </form>
+    </section>
+
+    <h2 class="section-title">Chọn game</h2>
+    <section id="games" class="games"></section>
+
+    <h2 class="section-title">Phòng đang mở <span id="room-count" class="pill"></span></h2>
+    <section id="rooms" class="rooms"></section>
+  </main>
+
+  <script src="/static/platform.js"></script>
+  <script src="/static/avatar.js"></script>
+  <script src="/static/guide.js"></script>
+  <script src="/static/lobby.js"></script>
+</body>
+</html>

@@ -1,0 +1,4 @@
+aiohttp>=3.8
+# Tuỳ chọn: giọng quản trò tiếng Việt tự nhiên (Hoài My) cho trình duyệt không có giọng Việt như Chrome.
+# Không cài thì máy chủ dùng giọng của Google Dịch. Cả hai đều cần máy chủ có Internet.
+edge-tts

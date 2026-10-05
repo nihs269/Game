@@ -1,0 +1,100 @@
+/* Phong cách chung cho các game bàn cờ (Cờ Tỷ Phú, Cờ Cá Ngựa…): nền trời có chiều sâu,
+   banner trạng thái kiểu Ma Sói, thẻ kính mờ và dàn nhân vật (cast.js). Nạp SAU style.css của game. */
+
+body.bk {
+  --sky-top: #141638; --sky-bot: #3b2356; --orb: #ffcf9a; --orb-glow: rgba(255, 180, 120, .32);
+  --card: rgba(26, 27, 60, .78); --card-hi: rgba(40, 42, 88, .9); --glass: rgba(18, 20, 48, .72);
+  background: linear-gradient(180deg, var(--sky-top), var(--sky-bot)) fixed;
+}
+body.bk.t-day { --sky-top: #28508f; --sky-bot: #c88a66; --orb: #ffe08a; --orb-glow: rgba(255, 222, 130, .45); }
+.bk-sky { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+.bk-sky .stars {
+  position: absolute; inset: -50%; opacity: .7; animation: bk-drift 140s linear infinite;
+  background-image:
+    radial-gradient(1.5px 1.5px at 20px 30px, #fff, transparent), radial-gradient(1px 1px at 90px 120px, #fff, transparent),
+    radial-gradient(1.2px 1.2px at 160px 60px, #fff, transparent), radial-gradient(1px 1px at 230px 170px, #fff, transparent),
+    radial-gradient(1.6px 1.6px at 300px 90px, #fff, transparent);
+  background-size: 340px 220px;
+}
+body.t-day .bk-sky .stars { opacity: 0; }
+.bk-sky .orb {
+  position: absolute; top: 80px; right: 7%; width: 110px; height: 110px; border-radius: 50%; opacity: .8;
+  background: radial-gradient(circle at 35% 35%, #fff, var(--orb) 60%); box-shadow: 0 0 90px 34px var(--orb-glow);
+}
+@keyframes bk-drift { to { transform: translate(170px, 110px); } }
+body.bk .topbar { background: rgba(10, 10, 30, .5); }
+
+/* ---------- Banner trạng thái ---------- */
+.gbanner {
+  display: grid; grid-template-columns: auto 1fr auto; align-items: center; column-gap: 14px;
+  padding: 12px 16px; border-radius: 20px; background: var(--card); border: 1px solid var(--line);
+  backdrop-filter: blur(12px); box-shadow: 0 10px 30px rgba(0, 0, 0, .25); animation: bk-rise .35s ease;
+}
+.gbanner:empty { display: none; }
+.gbanner .big { font-size: 40px; line-height: 1; filter: drop-shadow(0 4px 10px rgba(0, 0, 0, .35)); }
+.gbanner h2 { margin: 0; font-size: clamp(17px, 2.6vw, 21px); letter-spacing: -.01em; }
+.gbanner p { margin: 2px 0 0; color: var(--muted); font-size: 14px; line-height: 1.45; }
+.gbanner .gacts { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end; }
+.gbanner.mine { border-color: rgba(233, 196, 106, .7); box-shadow: 0 0 0 3px rgba(233, 196, 106, .14), 0 10px 30px rgba(0, 0, 0, .3); }
+.gbanner.win { background: linear-gradient(135deg, rgba(233, 196, 106, .35), rgba(60, 40, 110, .75)); }
+.gbanner .dotc { display: inline-block; width: 13px; height: 13px; border-radius: 50%; background: var(--pc); vertical-align: -1px; margin-right: 6px; box-shadow: 0 0 0 2px rgba(255, 255, 255, .6); }
+@keyframes bk-rise { from { opacity: 0; transform: translateY(8px); } }
+.gh-btn.gold { background: linear-gradient(135deg, #f7dc92, #d29e33); color: #2a1a00; border-color: transparent; box-shadow: 0 6px 18px rgba(233, 196, 106, .35); }
+.gh-btn.gold.pulse { animation: bk-pulse 1.3s ease-in-out infinite; }
+@keyframes bk-pulse { 50% { transform: scale(1.06); box-shadow: 0 8px 26px rgba(233, 196, 106, .55); } }
+
+/* ---------- Dàn nhân vật ---------- */
+.cast {
+  position: relative; display: flex; justify-content: center; align-items: flex-end; gap: clamp(6px, 2vw, 22px);
+  padding: 12px 12px 6px; min-height: 118px; gap: clamp(10px, 2.4vw, 30px); border-radius: 22px; overflow: hidden;
+  background:
+    radial-gradient(ellipse at 50% 120%, rgba(255, 190, 120, .28), transparent 60%),
+    linear-gradient(180deg, rgba(255, 255, 255, .05), rgba(255, 255, 255, .01));
+  border: 1px solid var(--line);
+}
+.cast::after { content: ''; position: absolute; left: 0; right: 0; bottom: 0; height: 34px; background: linear-gradient(180deg, transparent, rgba(0, 0, 0, .25)); pointer-events: none; }
+.cast-p { position: relative; width: clamp(60px, 6.5vw, 84px); display: flex; flex-direction: column; align-items: center; cursor: pointer; z-index: 1; transition: opacity .3s, filter .3s; }
+.cast-fig { width: 100%; position: relative; z-index: 1; }
+.cast-fig .av-svg { width: 100%; height: auto; overflow: visible; }
+.cast-fig .av-body { animation: av-idle 3s ease-in-out infinite; animation-delay: var(--d); }
+.cast-spot {
+  position: absolute; left: 50%; bottom: 34px; width: 130%; height: 22px; transform: translateX(-50%); border-radius: 50%;
+  background: radial-gradient(ellipse, var(--pc), transparent 70%); opacity: .45; transition: opacity .3s;
+}
+.cast-name {
+  position: relative; z-index: 2; margin-top: -6px; max-width: calc(100% + 26px); padding: 2px 9px; border-radius: 99px;
+  background: rgba(0, 0, 0, .55); border: 2px solid var(--pc); font-size: 12px; font-weight: 800;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.cast-sub { position: relative; z-index: 2; margin-top: 2px; font-size: 11px; font-weight: 700; color: #ffe7a8; white-space: nowrap; min-height: 14px; }
+.cast-badge { position: absolute; top: 0; right: -4px; z-index: 3; font-size: 18px; line-height: 1; filter: drop-shadow(0 2px 3px rgba(0, 0, 0, .5)); }
+.cast-p.me .cast-name { box-shadow: 0 0 0 2px rgba(255, 255, 255, .35); }
+.cast-p.turn .cast-spot { opacity: 1; height: 28px; box-shadow: 0 0 30px var(--pc); }
+.cast-p.turn .cast-fig { animation: cast-hop 1.1s ease-in-out infinite; }
+.cast-p.turn .cast-name { background: var(--pc); color: #111; text-shadow: none; }
+.cast-p.turn::before {
+  content: '▼'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); z-index: 3;
+  color: var(--pc); font-size: 14px; animation: cast-arrow 1s ease-in-out infinite; text-shadow: 0 0 8px var(--pc);
+}
+.cast-p.dim { opacity: .45; filter: grayscale(.7); }
+.cast-p.cheer .cast-fig { animation: cast-cheer .5s ease 3; }
+.cast-p.sad .cast-fig { animation: cast-sad .35s ease 4; filter: saturate(.4) brightness(.85); }
+@keyframes cast-hop { 50% { transform: translateY(-6px); } }
+@keyframes cast-arrow { 50% { transform: translate(-50%, 4px); } }
+@keyframes cast-cheer { 40% { transform: translateY(-18px) rotate(-6deg); } 70% { transform: translateY(-6px) rotate(4deg); } }
+@keyframes cast-sad { 25% { transform: translateX(-5px) rotate(-3deg); } 75% { transform: translateX(5px) rotate(3deg); } }
+
+/* ---------- Thẻ kính dùng chung ---------- */
+body.bk .panel, body.bk .emote-bar, body.bk .side { background: var(--card); backdrop-filter: blur(12px); }
+
+@media (max-width: 560px) {
+  .gbanner { grid-template-columns: auto 1fr; row-gap: 8px; padding: 10px 12px; }
+  .gbanner .big { font-size: 32px; }
+  .gbanner .gacts { grid-column: 1 / -1; justify-content: stretch; }
+  .gbanner .gacts .gh-btn { flex: 1; }
+  .cast { min-height: 118px; padding: 12px 4px 6px; gap: 2px; flex-wrap: wrap; row-gap: 8px; }
+  .cast-p { width: 76px; }
+  .cast-name { font-size: 11px; padding: 1px 7px; }
+  .cast-sub { font-size: 10px; }
+  .bk-sky .orb { width: 70px; height: 70px; top: 70px; }
+}

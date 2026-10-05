@@ -1,0 +1,20 @@
+# Chứng chỉ HTTPS tự tạo (có khoá bí mật) — mỗi máy tự sinh khi chạy --https
+.certs/
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# IDE / hệ điều hành
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Dữ liệu sinh ra khi chơi (từ được người chơi bỏ phiếu duyệt trong Nối Từ)
+games/noitu/custom.txt
+
+# Nhật ký
+*.log
