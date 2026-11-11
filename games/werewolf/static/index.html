@@ -36,6 +36,7 @@
         <div id="scene"></div>
         <div id="action" class="action"></div>
       </div>
+      <div id="roles-bar" class="roles-bar"></div>
       <div id="emotes" class="emote-bar"></div>
       <div id="myrole"></div>
       <div id="lobby"></div>
@@ -45,7 +46,6 @@
       <nav class="tabs">
         <button data-tab="chat" class="active">💬 Trò chuyện <span id="unread" class="unread" hidden></span></button>
         <button data-tab="log">📜 Nhật ký</button>
-        <button data-tab="roles">📖 Vai trò</button>
       </nav>
       <div class="tab-body" data-body="chat">
         <div id="chat-list" class="chat-list"></div>
@@ -55,9 +55,7 @@
           <button class="gh-btn primary small" type="submit">Gửi</button>
         </form>
       </div>
-      <div class="tab-body" data-body="log" hidden><div id="log-list" class="log-list"></div></div>
-      <div class="tab-body" data-body="roles" hidden><div id="roles-list" class="roles-list"></div></div>
-    </aside>
+      <div class="tab-body" data-body="log" hidden><div id="log-list" class="log-list"></div></div>    </aside>
   </main>
 
   <script src="/static/platform.js"></script>

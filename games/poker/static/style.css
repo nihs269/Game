@@ -486,3 +486,108 @@ body { --gold: #e9c46a; --pw: 54px; }
   .pot { font-size: 13px; padding: 4px 10px; }
   .betchip { font-size: 11px; }
 }
+
+/* Bàn chơi co theo chiều cao màn hình + bài tẩy và thanh hành động chung một hàng → không phải cuộn để vừa xem bài vừa bấm */
+.table { height: clamp(300px, calc(100vh - 300px), 520px); margin: 10px 0 14px; }
+.dock { display: flex; gap: 12px; align-items: flex-start; }
+.dock:not(:has(> :not(:empty))) { display: none; }
+.dock .myhand { flex: 0 0 auto; padding: 8px 14px; gap: 12px; flex-wrap: nowrap; }
+.dock .myhand .info { min-width: 120px; }
+.dock .myhand .hname { font-size: 16px; }
+.dock .myhand .pc.big { --pw: 60px; }
+.dock .bar { flex: 1 1 0; min-width: 0; }
+@media (max-width: 560px) {
+  .table { height: clamp(320px, calc(100vh - 330px), 430px); margin: 18px 0 20px; }
+  .dock .myhand .pc.big { --pw: 52px; }
+}
+/* Thanh hành động gọn khi nằm cạnh bài: thông báo (+ nút kết thúc ván) · hàng nút cùng cỡ · hàng chọn mức tố */
+.table { height: clamp(300px, calc(100vh - 330px), 520px); }
+/* Ghế đối diện có bài tẩy nhô lên trên mép bàn → chừa chỗ để vạch thời gian / thanh trên cùng không đè lên */
+.table { margin-top: 46px; }
+/* Bài tẩy và thanh hành động chung một hàng; thanh hẹp dưới 400px thì tự xuống dòng (cả hai giãn hết chiều ngang) */
+.dock { flex-wrap: wrap; align-items: stretch; }
+.dock .myhand { flex: 1 1 auto; justify-content: center; }
+.dock .bar { flex: 999 1 400px; min-width: 0; container-type: inline-size; padding: 8px 12px; gap: 8px; }
+.dock .bar .msg-main { order: 0; font-size: 14px; min-width: 0; }
+.dock .bar > [data-act="stop"] { order: 1; }
+.dock .bar .acts { order: 2; flex-basis: 100%; display: flex; gap: 6px; }
+.dock .bar .acts > .gh-btn {
+  flex: 1 1 0; min-width: 0; height: 44px; padding: 0 8px; border-radius: 12px; font-size: 14px; font-weight: 700;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.dock .bar .raise-box { order: 3; flex-basis: 100%; flex-wrap: nowrap; gap: 6px; padding: 6px; }
+.dock .raise-box input[type=range] { flex: 1 1 auto; width: auto; min-width: 60px; }
+.dock .raise-box input[type=number] { flex: 0 0 76px; width: 76px; height: 34px; padding: 0 8px; }
+.dock .raise-box .preset { flex: 0 0 auto; height: 34px; padding: 0 10px; font-size: 13px; white-space: nowrap; }
+.dock .raise-box .confirm { display: none; }
+@media (max-width: 560px) {
+  .table { margin-top: 40px; }
+}
+
+/* Không phải cuộn: bàn lấy phần chiều cao còn lại sau thanh trên cùng, bài tẩy và thanh nút
+   (--top-h, --dock-h do app.js đo; 100px = lề trang + lề trên/dưới của bàn + khoảng cách). */
+.table { height: clamp(280px, calc(100vh - var(--top-h, 60px) - var(--dock-h, 170px) - 100px), 520px); }
+@supports (height: 100dvh) {
+  .table { height: clamp(280px, calc(100dvh - var(--top-h, 60px) - var(--dock-h, 170px) - 100px), 520px); }
+}
+@media (max-width: 560px) {
+  .table { max-height: 430px; }
+}
+
+/* Màn hình chật (hẹp hoặc thấp): thanh nút còn một hàng, khung chọn mức tố bật lên phía trên khi bấm “Tố” */
+@media (max-width: 760px), (max-height: 820px) {
+  .dock .bar { position: relative; min-height: 96px; align-content: center; }
+  .dock .bar .raise-box {
+    display: none; position: absolute; left: 8px; right: 8px; bottom: calc(100% + 8px); z-index: 20;
+    flex-wrap: wrap; gap: 8px; padding: 10px; border-radius: 14px; background: var(--panel-solid, #1b1f3a);
+    border: 1px solid rgba(233, 196, 106, .6); box-shadow: 0 10px 30px rgba(0, 0, 0, .55);
+  }
+  .dock .bar.raise-open .raise-box { display: flex; animation: gh-fade .15s ease; }
+  .dock .bar.raise-open .opener { box-shadow: 0 0 0 2px #fff inset; }
+  .dock .raise-box input[type=range] { flex: 1 1 100%; height: 28px; }
+  .dock .raise-box .preset { flex: 1 1 0; }
+  .dock .raise-box .confirm { display: inline-flex; align-items: center; justify-content: center; flex: 1 1 100%; height: 44px; font-size: 15px; font-weight: 800; }
+}
+@media (max-width: 760px), (max-height: 820px) {
+  /* khung bài gọn để nằm chung hàng với thanh nút được lâu hơn */
+  .dock .bar { flex-basis: 340px; }
+  .dock .myhand { padding: 6px 12px; gap: 10px; }
+  .dock .myhand .pc.big { --pw: 50px; }
+  .dock .myhand .info { min-width: 0; max-width: 170px; }
+  .dock .myhand .hname { font-size: 15px; }
+  .myhand .mychips { font-size: 14px; }
+  .myhand .nb { white-space: nowrap; }
+}
+@media (max-width: 560px) {
+  /* điện thoại: khung bài một dòng thấp */
+  .dock .myhand { padding: 6px 10px; }
+  .dock .myhand .pc.big { --pw: 42px; }
+  .dock .myhand .info { max-width: none; }
+}
+/* Thanh nút hẹp: bỏ biểu tượng và chữ phụ trên nút để 4 nút vẫn nằm một hàng */
+@container (max-width: 470px) {
+  .dock .bar .acts > .gh-btn { font-size: 13px; padding: 0 4px; }
+  .dock .bar .acts .ic, .dock .bar .acts .lg { display: none; }
+  .dock .bar.myturn .msg-main small { display: none; }
+}
+
+/* Khung chat vẫn ở bên phải khi còn đủ chỗ (thu hẹp lại), chỉ xuống dưới khi màn hình hẹp hẳn */
+@media (max-width: 1100px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 280px; gap: 14px; }
+}
+@media (max-width: 900px) and (min-width: 761px) {
+  .layout { grid-template-columns: minmax(0, 1fr) 250px; padding: 12px 12px 24px; }
+  .side { position: sticky; height: calc(100vh - 100px); }
+}
+@media (max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .side { position: static; height: 480px; }
+}
+/* thanh trên cùng vừa màn hình hẹp, không đẩy trang tràn ngang */
+@media (max-width: 760px) {
+  .phase-pill { display: none; }
+  .topbar .icon-btn { width: 34px; height: 34px; font-size: 15px; }
+  .brand { font-size: 16px; min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+  .timer { min-width: 0; padding: 4px 8px; font-size: 16px; }
+}
+@media (max-width: 420px) { .brand { display: none; } }

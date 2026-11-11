@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>Võ Đài Sinh Tử</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🐉</text></svg>">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@600;800&family=Oswald:wght@500;700&display=swap">
+  <link rel="stylesheet" href="/static/platform.css">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="/static/boardkit.css">
+</head>
+<body class="bk mk">
+  <header class="topbar">
+    <button id="btn-leave" class="icon-btn" title="Rời phòng">←</button>
+    <div class="brand">🐉 <span>Võ Đài Sinh Tử</span></div>
+    <button id="btn-room" class="room-chip" title="Sao chép link mời">Phòng <b id="room-code">····</b> <span class="copy">⧉</span></button>
+    <div class="spacer"></div>
+    <div id="phase-pill" class="phase-pill"></div>
+    <button id="btn-sound" class="icon-btn" title="Bật/tắt âm thanh">🔈</button>
+    <button id="btn-guide" class="icon-btn" title="Hướng dẫn chơi">❓</button>
+    <div id="conn" class="conn" title="Kết nối"></div>
+  </header>
+
+  <main class="layout">
+    <section class="stage">
+      <div id="banner" class="gbanner"></div>
+      <div id="arena" class="arena" hidden>
+        <canvas id="gl"></canvas>
+        <canvas id="cv"></canvas>
+        <div id="pad" class="pad" hidden>
+          <div class="pad-l">
+            <button class="pb up" data-k="up">▲</button>
+            <button class="pb left" data-k="left">◀</button>
+            <button class="pb right" data-k="right">▶</button>
+            <button class="pb down" data-k="down">▼</button>
+          </div>
+          <div class="pad-r">
+            <button class="pb sp" data-a="sp0" title="Tuyệt chiêu 1">🔥</button>
+            <button class="pb sp" data-a="sp1" title="Tuyệt chiêu 2">🪝</button>
+            <button class="pb sp" data-a="sp2" title="Tuyệt chiêu 3">💨</button>
+            <button class="pb big" data-a="P" title="Đấm">👊</button>
+            <button class="pb big" data-a="K" title="Đá">🦶</button>
+            <button class="pb big" data-k="block" title="Đỡ">🛡️</button>
+            <button class="pb fatal" data-a="fatal" title="Kết liễu" hidden>💀</button>
+          </div>
+        </div>
+      </div>
+      <div id="panel"></div>
+      <div id="emotes" class="emote-bar"></div>
+    </section>
+
+    <aside class="side">
+      <nav class="tabs">
+        <button data-tab="players" class="active">👥 Người chơi</button>
+        <button data-tab="chat">💬 Trò chuyện <span id="unread" class="unread" hidden></span></button>
+        <button data-tab="log">📜 Diễn biến</button>
+      </nav>
+      <div class="tab-body" data-body="players"><div id="plist" class="plist"></div></div>
+      <div class="tab-body" data-body="chat" hidden>
+        <div id="chat-list" class="chat-list"></div>
+        <form id="chat-form" class="chat-form">
+          <input id="chat-input" maxlength="300" autocomplete="off" placeholder="Nhập tin nhắn…">
+          <button class="gh-btn primary small" type="submit">Gửi</button>
+        </form>
+      </div>
+      <div class="tab-body" data-body="log" hidden><div id="log-list" class="log-list"></div></div>
+    </aside>
+  </main>
+
+  <script src="/static/platform.js"></script>
+  <script src="/static/avatar.js"></script>
+  <script src="/static/guide.js"></script>
+  <script src="/static/chatbubble.js"></script>
+  <script src="vendor/three.min.js"></script>
+  <script src="vendor/GLTFLoader.js"></script>
+  <script src="vendor/SkeletonUtils.js"></script>
+  <script src="vendor/RoomEnvironment.js"></script>
+  <script src="render3d.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

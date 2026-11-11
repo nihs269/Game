@@ -1,4 +1,4 @@
-/* Nhân vật dùng chung cho mọi game: vẽ SVG nhiều lớp (da, tóc, trang phục,
+/* Nhân vật chibi dùng chung cho mọi game: vẽ SVG nhiều lớp (da, tóc, trang phục,
  * quần, giày, phụ kiện) + trình tạo nhân vật. Ngoại hình lưu ở localStorage
  * và gửi lên máy chủ khi vào phòng. */
 (function () {
@@ -11,14 +11,14 @@
     pants: ['#2d3436', '#40506a', '#1e6fd9', '#6c5ce7', '#b2bec3', '#8d6e63', '#0f8b6d'],
     shoes: ['sneaker', 'boot', 'sandal', 'formal'],
     shoeColor: ['#ffffff', '#2d3436', '#e03e3e', '#2f7cf6', '#f7c948', '#7a4a2e'],
-    acc: ['none', 'glasses', 'sunglasses', 'beanie', 'cap', 'crown', 'flower', 'headband', 'witchhat'],
+    acc: ['none', 'glasses', 'sunglasses', 'crown', 'flower', 'headband'],
     accColor: ['#e74c3c', '#ff8a3d', '#f6c945', '#35c46a', '#3b8cff', '#8e5cf7', '#2d3436', '#ff79b0'],
   };
   const LABELS = {
     hair: { short: 'Ngắn', spiky: 'Dựng', long: 'Dài', bob: 'Bob', ponytail: 'Đuôi ngựa', bun: 'Búi', curly: 'Xoăn', mohawk: 'Mohawk', bald: 'Trọc' },
     outfit: { tshirt: 'Áo thun', hoodie: 'Hoodie', dress: 'Váy', suit: 'Vest', robe: 'Áo choàng', overall: 'Yếm' },
     shoes: { sneaker: 'Sneaker', boot: 'Bốt', sandal: 'Dép', formal: 'Giày tây' },
-    acc: { none: 'Không', glasses: 'Kính', sunglasses: 'Kính râm', beanie: 'Mũ len', cap: 'Mũ lưỡi trai', crown: 'Vương miện', flower: 'Hoa cài', headband: 'Băng đô', witchhat: 'Mũ phù thủy' },
+    acc: { none: 'Không', glasses: 'Kính', sunglasses: 'Kính râm', crown: 'Vương miện', flower: 'Hoa cài', headband: 'Băng đô' },
   };
   const CATS = [
     ['hair', 'Kiểu tóc', 'style'], ['hairColor', 'Màu tóc', 'color'], ['skin', 'Màu da', 'color'],
@@ -55,166 +55,95 @@
     return out;
   }
 
-  function shade(hex, pct) {
+  // ---------------------------------------------------------------- các bộ phận (ảnh chibi trong static/chibi)
+  // Mỗi bộ phận là một ảnh xám, tô màu bằng bộ lọc SVG. Khung hình giữ như cũ để các game cắt ghép không lệch:
+  // viewBox 0 -16 100 166, bàn chân ở y≈141, vai ở y≈76.
+  // PART[tên] = [x, y, rộng, cao, màu tô (khoá trong look)]
+  const PART = {"head":[12.9,0.7,74.0,71.5,"skin"],"body":[30.9,71.7,38.5,62.0,"skin"],"torso":[39.4,71.7,21.5,36.0,"skin"],"feet":[30.4,133.7,39.0,7.5,"skin"],"neck-long":[43.9,68.7,12.5,15.5,"skin"],"body-slim":[30.9,71.7,38.0,62.0,"skin"],"arm-l":[20.9,85.7,16.0,28.0,"skin"],"arm-r":[63.4,85.7,16.0,28.0,"skin"],"neck":[41.9,71.7,16.0,4.5,"skin"],"legs":[31.9,125.7,36.5,8.0,"skin"],"hand-l":[20.9,102.2,12.0,11.5,"skin"],"hand-r":[67.4,102.2,12.0,11.5,"skin"],"hair-short-front":[9.9,-5.3,80.0,56.0,"hairColor"],"hair-short-back":[13.9,-4.3,72.0,55.5,"hairColor"],"hair-spiky-front":[8.9,-7.3,82.0,56.0,"hairColor"],"hair-spiky-back":[7.9,-7.3,84.0,68.5,"hairColor"],"hair-long-front":[12.9,-4.3,74.0,98.0,"hairColor"],"hair-long-back":[10.4,-3.3,79.0,109.5,"hairColor"],"hair-bob-front":[10.4,-3.3,79.0,58.0,"hairColor"],"hair-bob-back":[8.9,-4.3,82.0,60.5,"hairColor"],"hair-ponytail-front":[12.9,-13.3,93.0,76.0,"hairColor"],"hair-bun-front":[10.9,-13.3,78.0,68.0,"hairColor"],"hair-bun-back":[12.9,-15.3,74.0,75.5,"hairColor"],"hair-curly-front":[6.9,-7.3,86.0,63.0,"hairColor"],"hair-curly-back":[4.9,-5.3,90.0,63.0,"hairColor"],"hair-mohawk-front":[13.9,-11.3,72.0,58.5,"hairColor"],"hair-mohawk-back":[13.9,-11.3,72.0,71.0,"hairColor"],"hair-bald-front":[31.9,7.7,12.5,6.0],"acc-sunglasses":[24.9,39.7,50.0,19.5,"accColor"],"acc-sunglasses-lens":[29.9,43.2,40.0,13.5],"acc-crown":[30.9,-18.3,38.0,27.0,"accColor"],"acc-flower":[18.9,7.7,20.0,15.0,"accColor"],"acc-headband":[13.9,-3.3,72.0,42.0,"accColor"],"face-eyes-open":[31.9,41.2,36.0,15.0],"face-eyes-angry":[33.4,43.7,33.0,13.0],"face-mouth-smile":[45.4,58.2,9.0,6.0],"face-mouth-open":[47.9,59.2,4.0,4.0],"face-mouth-sad":[47.4,59.7,5.0,2.0],"face-tears":[36.9,52.7,26.0,7.5],"outfit-tshirt":[30.4,73.2,39.0,41.0,"outfitColor"],"outfit-tshirt-back":[42.4,73.2,15.0,6.0,"outfitColor"],"outfit-tshirt-sl":[26.4,73.7,14.5,20.5,"outfitColor"],"outfit-tshirt-sr":[59.4,74.2,14.0,20.0,"outfitColor"],"outfit-hoodie":[31.4,72.7,37.0,45.5,"outfitColor"],"outfit-hoodie-back":[41.4,72.7,17.0,11.0,"outfitColor"],"outfit-hoodie-sl":[24.9,72.7,16.5,41.5,"outfitColor"],"outfit-hoodie-sr":[58.9,72.7,16.0,41.5,"outfitColor"],"outfit-overall":[28.9,72.7,42.0,57.0,"outfitColor"],"outfit-overall-sl":[26.9,73.2,14.0,21.0,"outfitColor"],"outfit-overall-sr":[59.4,73.2,13.5,21.0,"outfitColor"],"outfit-dress":[21.9,73.2,56.0,62.0,"outfitColor"],"outfit-dress-sl":[27.4,73.7,13.5,18.5,"outfitColor"],"outfit-dress-sr":[59.4,74.2,13.0,18.0,"outfitColor"],"outfit-robe":[23.9,73.2,52.0,64.5,"outfitColor"],"outfit-robe-back":[40.4,72.7,19.0,9.0,"outfitColor"],"outfit-robe-sl":[22.9,77.2,15.0,34.5,"outfitColor"],"outfit-robe-sr":[61.9,77.2,15.0,34.5,"outfitColor"],"outfit-suit":[26.9,73.7,46.0,61.0,"outfitColor"],"outfit-suit-back":[43.9,73.2,12.0,5.5,"outfitColor"],"outfit-suit-sl":[24.4,77.7,13.5,26.0,"outfitColor"],"outfit-suit-sr":[61.9,77.7,13.5,26.0,"outfitColor"],"pants-shorts":[30.9,103.7,38.0,29.0,"pants"],"shoes-sneaker":[27.9,124.2,43.5,18.5,"shoeColor"],"shoes-sneaker-low":[27.9,131.7,43.5,11.0,"shoeColor"],"shoes-boot":[27.9,118.2,43.5,24.5,"shoeColor"],"shoes-boot-low":[27.9,131.7,43.5,11.0,"shoeColor"],"shoes-formal":[27.9,122.7,44.0,20.0,"shoeColor"],"shoes-formal-low":[27.9,131.7,44.0,11.0,"shoeColor"],"shoes-sandal":[29.4,118.7,41.0,24.0,"shoeColor"],"shoes-sandal-low":[29.4,131.7,41.0,11.0,"shoeColor"]};
+  const DIR = (() => {
+    const s = document.currentScript && document.currentScript.src;
+    return s ? new URL('chibi/', s).href : '/static/chibi/';
+  })();
+  const VER = '261111095326';   // đổi mỗi lần dựng lại ảnh -> trình duyệt tải ảnh mới
+  const DATA = {};           // tên -> data URI (dùng khi game vẽ hình lên canvas)
+  const TALL_HATS = ['crown'];
+  // Mũ trùm đầu: giấu phần tóc nằm trên mép dưới của mũ để tóc không chọc xuyên mũ.
+  const HAT_MASK = {};
+  // Áo dài tay: chỉ vẽ bàn tay, dời tới cổ tay áo (đơn vị hình, tay trái; tay phải lật dấu x).
+  const NECK_DROP = { tshirt: 3, hoodie: 6, suit: 2.5, robe: 5 };   // hạ đầu xuống để cổ chui vào cổ áo
+  const HAND = { hoodie: [2.5, 8], suit: [0.8, -1.5], robe: [2.0, 0.5] };
+  let uid = 0;
+  // Kính tròn: vẽ vector, mỗi tròng ôm trọn một mắt (tâm mắt x 39.3 / 60.4, y 47.4).
+  function glasses(c) {
+    const ring = (x) => `<circle cx="${x}" cy="47.4" r="8.7"/>`;
+    const shape = `${ring(39.3)}${ring(60.4)}<path d="M47.6 45.6 Q49.85 43.9 52.1 45.6 M30.7 46.2 H28.6 M69 46.2 H71.1"/>`;
+    return `<g fill="none" stroke-linecap="round">
+      <g fill="#fff" fill-opacity=".14" stroke="none">${ring(39.3)}${ring(60.4)}</g>
+      <path d="M33.6 43.6 A6.6 6.6 0 0 1 37.6 40.9 M54.7 43.6 A6.6 6.6 0 0 1 58.7 40.9" stroke="#fff" stroke-opacity=".75" stroke-width=".9"/>
+      <g stroke="#3a2a22" stroke-width="2.5">${shape}</g><g stroke="${c}" stroke-width="1.3">${shape}</g></g>`;
+  }
+
+  function tintFilter(fid, hex) {
     const n = parseInt(hex.slice(1), 16);
-    const f = (c) => Math.max(0, Math.min(255, Math.round(c + (pct / 100) * (pct < 0 ? c : 255 - c))));
-    const r = f(n >> 16), g = f((n >> 8) & 255), b = f(n & 255);
-    return '#' + ((1 << 24) + (r << 16) + (g << 8) + b).toString(16).slice(1);
-  }
-
-  // ---------------------------------------------------------------- các bộ phận
-  function hairParts(style, c) {
-    const d = shade(c, -18);
-    const shortFront = `<path d="M25 48 Q24 18 50 17 Q76 18 75 48 Q72 34 60 30 Q50 36 38 31 Q28 36 25 48Z" fill="${c}"/>`;
-    const bangs = `<path d="M25 50 Q24 17 50 17 Q76 17 75 50 Q73 34 64 30 Q58 38 46 35 Q36 38 27 50Z" fill="${c}"/>`;
-    switch (style) {
-      case 'spiky':
-        return { back: '', front: `<path d="M25 46 L23 28 L32 30 L33 13 L43 25 L50 6 L57 25 L67 13 L68 30 L77 28 L75 46 Q70 32 50 31 Q30 32 25 46Z" fill="${c}"/>` };
-      case 'long':
-        return { back: `<path d="M24 46 Q22 15 50 15 Q78 15 76 46 L80 104 Q67 110 62 99 L62 72 L38 72 L38 99 Q33 110 20 104Z" fill="${d}"/>`, front: bangs };
-      case 'bob':
-        return { back: `<path d="M23 48 Q21 15 50 15 Q79 15 77 48 L78 72 Q72 78 66 70 L34 70 Q28 78 22 72Z" fill="${d}"/>`, front: bangs };
-      case 'ponytail':
-        return { back: `<path d="M70 28 Q94 30 90 66 Q87 84 78 78 Q86 54 68 40Z" fill="${d}"/><circle cx="72" cy="31" r="4" fill="#ff5d8f"/>`, front: shortFront };
-      case 'bun':
-        return { back: `<circle cx="50" cy="14" r="11" fill="${d}"/>`, front: shortFront };
-      case 'curly': {
-        const pts = [[27, 42], [31, 29], [40, 21], [50, 18], [60, 21], [69, 29], [73, 42]];
-        return {
-          back: `<circle cx="24" cy="54" r="8" fill="${d}"/><circle cx="76" cy="54" r="8" fill="${d}"/>`,
-          front: pts.map(([x, y]) => `<circle cx="${x}" cy="${y}" r="8.5" fill="${c}"/>`).join(''),
-        };
-      }
-      case 'mohawk':
-        return { back: '', front: `<path d="M44 34 Q43 8 50 0 Q57 8 56 34 Q50 29 44 34Z" fill="${c}"/>` };
-      case 'bald':
-        return { back: '', front: '<ellipse cx="41" cy="30" rx="7" ry="4" fill="#fff" opacity=".25"/>' };
-      default:
-        return { back: '', front: shortFront };
-    }
-  }
-
-  function accPart(style, c) {
-    const d = shade(c, -25);
-    switch (style) {
-      case 'glasses':
-        return `<g fill="none" stroke="${d}" stroke-width="2"><circle cx="41" cy="49" r="7"/><circle cx="59" cy="49" r="7"/><path d="M48 49h4M34 47l-8-2M66 47l8-2"/></g>`;
-      case 'sunglasses':
-        return '<g><rect x="32" y="44" width="16" height="10" rx="4" fill="#111"/><rect x="52" y="44" width="16" height="10" rx="4" fill="#111"/><path d="M48 48h4M32 47l-6-2M68 47l6-2" stroke="#111" stroke-width="2"/><path d="M35 46l4 0" stroke="#fff" stroke-width="1.5" opacity=".6"/></g>';
-      case 'beanie':
-        return `<path d="M23 40 Q24 9 50 9 Q76 9 77 40Z" fill="${c}"/><rect x="21" y="34" width="58" height="10" rx="5" fill="${d}"/><circle cx="50" cy="8" r="6" fill="#fff"/>`;
-      case 'cap':
-        return `<path d="M25 37 Q26 11 50 11 Q74 11 75 37Z" fill="${c}"/><path d="M48 35 Q80 30 94 39 Q80 43 48 39Z" fill="${d}"/><circle cx="50" cy="12" r="2.5" fill="${d}"/>`;
-      case 'crown':
-        return '<path d="M33 25 L35 7 L43 16 L50 3 L57 16 L65 7 L67 25Z" fill="#f9ca24" stroke="#d99a00" stroke-width="1.5"/><circle cx="50" cy="18" r="2.6" fill="#e74c3c"/><circle cx="40" cy="20" r="2" fill="#3b8cff"/><circle cx="60" cy="20" r="2" fill="#35c46a"/>';
-      case 'flower':
-        return `<g transform="translate(70 26)">${[0, 72, 144, 216, 288].map((a) => `<circle cx="${(Math.cos(a * Math.PI / 180) * 5).toFixed(1)}" cy="${(Math.sin(a * Math.PI / 180) * 5).toFixed(1)}" r="4.2" fill="${c}"/>`).join('')}<circle r="3" fill="#ffd93b"/></g>`;
-      case 'headband':
-        return `<path d="M26 37 Q50 20 74 37" stroke="${c}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M64 26 l10 -7 l0 12Z M64 26 l-3 -11 l11 4Z" fill="${d}"/>`;
-      case 'witchhat':
-        return `<path d="M31 26 Q44 20 52 -14 Q58 6 69 26Z" fill="${c}"/><ellipse cx="50" cy="26" rx="33" ry="6" fill="${d}"/><rect x="36" y="18" width="28" height="5" fill="#f6c945"/>`;
-      default:
-        return '';
-    }
-  }
-
-  function outfitParts(style, c, skin) {
-    const d = shade(c, -22);
-    const body = 'M31 74 Q31 70 37 70 L63 70 Q69 70 69 74 L70 110 L30 110Z';
-    switch (style) {
-      case 'hoodie':
-        return {
-          torso: `<path d="M35 72 Q50 60 65 72 L61 77 Q50 70 39 77Z" fill="${d}"/><path d="${body}" fill="${c}"/>
-            <path d="M40 95h20v11h-20z" fill="${d}" opacity=".6"/><path d="M46 72v12M54 72v12" stroke="#fff" stroke-width="1.4"/>`,
-          sleeve: 'long', sc: c,
-        };
-      case 'dress':
-        return {
-          torso: `<path d="M34 71 L66 71 L64 90 L36 90Z" fill="${c}"/><path d="M36 88 L64 88 L77 121 Q50 128 23 121Z" fill="${c}"/>
-            <path d="M24 119 Q50 126 76 119" stroke="${d}" stroke-width="3" fill="none"/><path d="M36 89h28" stroke="${d}" stroke-width="3"/>`,
-          sleeve: 'short', sc: c, over: true,
-        };
-      case 'suit':
-        return {
-          torso: `<path d="${body}" fill="${c}"/><path d="M43 70 L50 88 L57 70Z" fill="#f5f6fa"/><path d="M48.5 72h3l1.5 14-3 4-3-4z" fill="#d63031"/>
-            <path d="M43 70 L47 92 M57 70 L53 92" stroke="${d}" stroke-width="2"/><circle cx="50" cy="98" r="1.6" fill="${d}"/><circle cx="50" cy="104" r="1.6" fill="${d}"/>`,
-          sleeve: 'long', sc: c,
-        };
-      case 'robe':
-        return {
-          torso: `<path d="M31 72 Q50 64 69 72 L79 134 Q50 141 21 134Z" fill="${c}"/><rect x="31" y="90" width="38" height="5" fill="${d}"/>
-            <path d="M50 70 L50 136" stroke="${d}" stroke-width="1.5"/><path d="M22 132 Q50 139 78 132" stroke="#f6c945" stroke-width="2.5" fill="none"/>`,
-          sleeve: 'wide', sc: c, over: true,
-        };
-      case 'overall':
-        return {
-          torso: `<path d="${body}" fill="#f5f6fa"/><path d="M36 84h28v26h-28z" fill="${c}"/><path d="M37 85 L39 70 M63 85 L61 70" stroke="${c}" stroke-width="4"/>
-            <circle cx="40" cy="87" r="1.8" fill="#f6c945"/><circle cx="60" cy="87" r="1.8" fill="#f6c945"/><path d="M44 92h12v7h-12z" fill="${d}"/>`,
-          sleeve: 'short', sc: '#f5f6fa',
-        };
-      default:
-        return {
-          torso: `<path d="${body}" fill="${c}"/><path d="M44 70 Q50 76 56 70" stroke="${d}" stroke-width="2" fill="none"/>`,
-          sleeve: 'short', sc: c,
-        };
-    }
-  }
-
-  function arm(side, sleeve, sc, skin) {
-    const x = side === 'l' ? 21 : 69;
-    const hx = x + 5;
-    let sleeveEl;
-    if (sleeve === 'short') sleeveEl = `<rect x="${x - 1}" y="72" width="12" height="15" rx="5" fill="${sc}"/>`;
-    else if (sleeve === 'wide') sleeveEl = `<path d="M${x - 2} 74 h14 l3 30 h-20z" fill="${sc}"/>`;
-    else sleeveEl = `<rect x="${x - 0.5}" y="72" width="11" height="29" rx="5" fill="${sc}"/>`;
-    return `<g class="av-arm av-arm-${side}"><rect x="${x}" y="74" width="10" height="30" rx="5" fill="${skin}"/>${sleeveEl}
-      <circle cx="${hx}" cy="105" r="5.5" fill="${skin}"/><g class="av-hold"></g></g>`;
-  }
-
-  function shoe(x, style, c, skin) {
-    switch (style) {
-      case 'boot':
-        return `<path d="M${x - 6} 121h12v12q5 1 5 5v2h-17z" fill="${c}"/><rect x="${x - 6}" y="121" width="12" height="3" fill="${shade(c, -25)}"/>`;
-      case 'sandal':
-        return `<ellipse cx="${x + 1}" cy="136" rx="8" ry="4" fill="${skin}"/><rect x="${x - 6}" y="133" width="14" height="2.6" rx="1" fill="${c}"/><rect x="${x - 8}" y="138.5" width="18" height="2.4" rx="1" fill="${c}"/>`;
-      case 'formal':
-        return `<ellipse cx="${x + 1}" cy="136.5" rx="9.5" ry="4.8" fill="${c}"/><ellipse cx="${x + 3}" cy="134.5" rx="4" ry="1.4" fill="#fff" opacity=".4"/>`;
-      default:
-        return `<path d="M${x - 8} 133 Q${x - 8} 129 ${x - 4} 129 L${x + 3} 129 Q${x + 10} 131 ${x + 10} 136 L${x + 10} 139 L${x - 8} 139Z" fill="${c}"/><rect x="${x - 8}" y="137.5" width="18" height="3" rx="1.5" fill="#fff"/>`;
-    }
+    const k = (c) => (c / 255 / 0.85).toFixed(3);
+    return `<filter id="${fid}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${k(n >> 16)} 0 0 0 0 0 ${k((n >> 8) & 255)} 0 0 0 0 0 ${k(n & 255)} 0 0 0 0 0 1 0"/></filter>`;
   }
 
   function svg(look, opts = {}) {
     const L = sanitize(look, opts.seed);
-    const skin = L.skin;
-    const skinD = shade(skin, -12);
-    const hair = hairParts(L.hair, L.hairColor);
-    const out = outfitParts(L.outfit, L.outfitColor, skin);
-    const vb = opts.head ? '14 -16 72 88' : '0 -16 100 166';
-    const legs = `<rect x="37" y="104" width="11" height="30" rx="5" fill="${L.pants}"/><rect x="52" y="104" width="11" height="30" rx="5" fill="${L.pants}"/>`;
-    const shoes = shoe(42.5, L.shoes, L.shoeColor, skin) + shoe(57.5, L.shoes, L.shoeColor, skin);
-    const face = `
-      <g class="av-eo"><ellipse cx="41" cy="50" rx="3.4" ry="4.3" fill="#2a2a2a"/><ellipse cx="59" cy="50" rx="3.4" ry="4.3" fill="#2a2a2a"/>
-        <circle cx="42.3" cy="48.4" r="1.3" fill="#fff"/><circle cx="60.3" cy="48.4" r="1.3" fill="#fff"/></g>
-      <g class="av-ec" fill="none" stroke="#2a2a2a" stroke-width="2" stroke-linecap="round"><path d="M37 50 Q41 53.5 45 50"/><path d="M55 50 Q59 53.5 63 50"/></g>
-      <g class="av-ew"><ellipse cx="41" cy="50" rx="4" ry="3" fill="#ff2a2a"/><ellipse cx="59" cy="50" rx="4" ry="3" fill="#ff2a2a"/>
-        <ellipse cx="41" cy="50" rx="1.2" ry="2.6" fill="#300"/><ellipse cx="59" cy="50" rx="1.2" ry="2.6" fill="#300"/></g>
-      <ellipse cx="34" cy="57" rx="4" ry="2.4" fill="#ff7b9c" opacity=".35"/><ellipse cx="66" cy="57" rx="4" ry="2.4" fill="#ff7b9c" opacity=".35"/>
-      <path class="av-ms" d="M45 59 Q50 63.5 55 59" stroke="#7a3b2e" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <ellipse class="av-mo" cx="50" cy="61" rx="3" ry="3.8" fill="#7a3b2e"/>
-      <path class="av-md" d="M45 62.5 Q50 58 55 62.5" stroke="#7a3b2e" stroke-width="2" fill="none" stroke-linecap="round"/>
-      <g class="av-tears"><path d="M38 55 q-2 5 0 7 q2 -2 0 -7z" fill="#6ecbff"/><path d="M62 55 q-2 5 0 7 q2 -2 0 -7z" fill="#6ecbff"/></g>`;
+    const id = 'a' + (++uid);
+    const used = new Set();
+    const img = (name, attrs = '') => {
+      const p = PART[name];
+      if (!p) return '';
+      const src = (opts.inline && DATA[name]) || DIR + name + '.webp?v=' + VER;
+      let f = '';
+      if (p[4]) { used.add(p[4]); f = ` filter="url(#${id}${p[4]})"`; }
+      return `<image href="${src}" x="${p[0]}" y="${p[1]}" width="${p[2]}" height="${p[3]}" preserveAspectRatio="none"${f}${attrs}/>`;
+    };
+    const hm = HAT_MASK[L.acc];
+    const clip = hm ? ` mask="url(#${id}hm)"` : '';
+    const hairBack = PART[`hair-${L.hair}-back`] ? `<g${clip}>${img(`hair-${L.hair}-back`)}</g>` : '';
+    const hairFront = PART[`hair-${L.hair}-front`] ? `<g${clip}>${img(`hair-${L.hair}-front`)}</g>` : '';
+    const o = L.outfit;
+    const hand = HAND[o];
+    const drop = opts.head ? 0 : (NECK_DROP[o] || 0);
+    const arm = (s) => `<g class="av-arm av-arm-${s}">${hand
+      ? `<g transform="translate(${s === 'l' ? hand[0] : -hand[0]} ${hand[1]})">${img('hand-' + s)}</g>` : img('arm-' + s)}${img(`outfit-${o}-s${s}`)}<g class="av-hold"></g></g>`;
     const body = opts.head ? '' : `
-      <g class="av-seat"><rect x="17" y="113" width="66" height="15" rx="7.5" fill="#7a5230"/><ellipse cx="18" cy="120.5" rx="4.5" ry="7.5" fill="#b07a4c"/><path d="M28 118h20M52 123h22" stroke="#5c3b20" stroke-width="1.4"/></g>
-      ${hair.back}${out.over ? legs + shoes + out.torso : legs + shoes + out.torso}
-      ${arm('l', out.sleeve, out.sc, skin)}${arm('r', out.sleeve, out.sc, skin)}
-      <rect x="45" y="64" width="10" height="9" fill="${skinD}"/>`;
-    return `<svg class="av-svg" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      ${opts.head ? '' : '<ellipse class="av-shadow" cx="50" cy="143" rx="32" ry="5" fill="rgba(0,0,0,.35)"/>'}
-      <g class="av-body">${opts.head ? hair.back : ''}${body}
-        <g class="av-head"><circle cx="25" cy="49" r="5" fill="${skinD}"/><circle cx="75" cy="49" r="5" fill="${skinD}"/>
-          <circle cx="50" cy="46" r="25" fill="${skin}"/>${face}${hair.front}${accPart(L.acc, L.accColor)}</g>
-      </g></svg>`;
+      <g class="av-seat"><rect x="17" y="113" width="66" height="15" rx="7.5" fill="#7a5230" stroke="#3a2a22" stroke-width="1.4"/><ellipse cx="18" cy="120.5" rx="4.5" ry="7.5" fill="#b07a4c" stroke="#3a2a22" stroke-width="1.2"/><path d="M28 118h20M52 123h22" stroke="#5c3b20" stroke-width="1.4"/></g>
+      <g transform="translate(0 ${drop})">${hairBack}</g>${PART[`outfit-${o}-back`] ? '' : img('neck')}${o === 'suit' ? '' : img('legs')}${L.shoes === 'sandal' ? img('feet') : ''}${img('shoes-' + L.shoes + (o === 'suit' ? '-low' : ''))}${o === 'tshirt' || o === 'hoodie' ? img('pants-shorts') : ''}
+      ${arm('l')}${arm('r')}${PART[`outfit-${o}-back`] ? img(`outfit-${o}-back`) + img('neck-long') : ''}${img('outfit-' + o)}`;
+    const face = `<g class="av-eo">${img('face-eyes-open')}</g>
+      <g class="av-ec"><path d="M35.8 48.2 Q39.3 44.6 42.8 48.2 M57.2 48.2 Q60.7 44.6 64.2 48.2" fill="none" stroke="#3a2a22" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="38.6" cy="53.4" rx="2.6" ry="1.4" fill="#ff8fa3" opacity=".55"/><ellipse cx="61.4" cy="53.4" rx="2.6" ry="1.4" fill="#ff8fa3" opacity=".55"/></g>
+      <g class="av-ew">${img('face-eyes-angry')}</g>
+      <g class="av-ms">${img('face-mouth-smile')}</g><g class="av-mo">${img('face-mouth-open')}</g><g class="av-md">${img('face-mouth-sad')}</g>
+      <g class="av-tears">${img('face-tears')}</g>`;
+    const head = `<g transform="translate(0 ${drop})"><g class="av-head">${opts.head ? hairBack : ''}${img('head')}${face}${hairFront}${L.acc === 'glasses' ? glasses(L.accColor) : L.acc !== 'none' ? img('acc-' + L.acc + '-lens') + img('acc-' + L.acc) : ''}</g></g>`;
+    const vb = !opts.head ? '0 -16 100 166' : TALL_HATS.includes(L.acc) ? '3 -32 94 106' : '9 -16 82 90';
+    const inner = `${opts.head ? '' : '<ellipse class="av-shadow" cx="50" cy="142.5" rx="24" ry="3.8" fill="rgba(0,0,0,.3)"/>'}
+      <g class="av-body">${body}${head}</g>`;
+    const C = { skin: L.skin, hairColor: L.hairColor, outfitColor: L.outfitColor, pants: L.pants, shoeColor: L.shoeColor, accColor: L.accColor };
+    const defs = [...used].map((k) => tintFilter(id + k, C[k])).join('') +
+      (hm ? `<mask id="${id}hm" maskUnits="userSpaceOnUse" x="-50" y="-100" width="200" height="300"><rect x="-50" y="-100" width="200" height="300" fill="#fff"/><path d="${hm}" fill="#000"/></mask>` : '');
+    return `<svg class="av-svg" viewBox="${vb}" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"${opts.head ? ' style="overflow:hidden"' : ''}>
+      <defs>${defs}</defs>${inner}</svg>`;
+  }
+
+  // Nạp sẵn ảnh thành data URI: ảnh SVG vẽ lên canvas (qua <img>) không được tải file ngoài.
+  let readyP = null;
+  function ready() {
+    if (!readyP) {
+      readyP = Promise.all(Object.keys(PART).map((n) => fetch(DIR + n + '.webp?v=' + VER)
+        .then((r) => r.blob())
+        .then((b) => new Promise((ok) => { const fr = new FileReader(); fr.onload = () => { DATA[n] = fr.result; ok(); }; fr.onerror = () => ok(); fr.readAsDataURL(b); }))
+        .catch(() => {})));
+    }
+    return readyP;
+  }
+  // Như svg() nhưng nhúng ảnh vào chuỗi — dùng để vẽ lên canvas.
+  function svgInline(look, opts = {}) {
+    return ready().then(() => svg(look, { ...opts, inline: true }));
   }
 
   // ---------------------------------------------------------------- lưu trữ
@@ -268,5 +197,5 @@
     return { get: () => cur };
   }
 
-  window.Avatar = { OPT, svg, random, sanitize, get, set, editor };
+  window.Avatar = { OPT, svg, svgInline, ready, random, sanitize, get, set, editor };
 })();

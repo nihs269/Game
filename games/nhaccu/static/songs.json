@@ -1,0 +1,23 @@
+[
+  {"id": "scale", "name": "Thang âm Đô trưởng", "icon": "🪜", "level": 1, "bpm": 80,
+   "hint": "Đi lên rồi đi xuống 8 nốt — bài khởi động cho mọi nhạc cụ.",
+   "notes": "C4 D4 E4 F4 G4 A4 B4 C5-2 B4 A4 G4 F4 E4 D4 C4-2"},
+  {"id": "twinkle", "name": "Ngôi sao nhỏ (Twinkle Twinkle)", "icon": "⭐", "level": 1, "bpm": 92,
+   "hint": "Giai điệu dân gian quen thuộc, chỉ dùng 6 nốt.",
+   "notes": "C4 C4 G4 G4 A4 A4 G4-2 F4 F4 E4 E4 D4 D4 C4-2 G4 G4 F4 F4 E4 E4 D4-2 G4 G4 F4 F4 E4 E4 D4-2 C4 C4 G4 G4 A4 A4 G4-2 F4 F4 E4 E4 D4 D4 C4-2"},
+  {"id": "lamb", "name": "Chú cừu nhỏ (Mary Had a Little Lamb)", "icon": "🐑", "level": 1, "bpm": 100,
+   "hint": "Chỉ 4 nốt Đô Rê Mi Sol — rất hợp để tập ngón.",
+   "notes": "E4 D4 C4 D4 E4 E4 E4-2 D4 D4 D4-2 E4 G4 G4-2 E4 D4 C4 D4 E4 E4 E4 E4 D4 D4 E4 D4 C4-4"},
+  {"id": "frere", "name": "Kìa con bướm vàng (Frère Jacques)", "icon": "🦋", "level": 2, "bpm": 100,
+   "hint": "Bài dân ca Pháp — có đoạn nốt móc đơn nhanh.",
+   "notes": "C4 D4 E4 C4 C4 D4 E4 C4 E4 F4 G4-2 E4 F4 G4-2 G4-.5 A4-.5 G4-.5 F4-.5 E4 C4 G4-.5 A4-.5 G4-.5 F4-.5 E4 C4 C4 G3 C4-2 C4 G3 C4-2"},
+  {"id": "ode", "name": "Khúc hoan ca (Ode to Joy — Beethoven)", "icon": "🎻", "level": 2, "bpm": 100,
+   "hint": "Trích Giao hưởng số 9 — đi liền bậc, có nốt chấm dôi.",
+   "notes": "E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 E4-1.5 D4-.5 D4-2 E4 E4 F4 G4 G4 F4 E4 D4 C4 C4 D4 E4 D4-1.5 C4-.5 C4-2"},
+  {"id": "birthday", "name": "Chúc mừng sinh nhật", "icon": "🎂", "level": 3, "bpm": 100,
+   "hint": "Nhịp 3/4, quãng nhảy rộng tới quãng 8.",
+   "notes": "G4-.75 G4-.25 A4 G4 C5 B4-2 G4-.75 G4-.25 A4 G4 D5 C5-2 G4-.75 G4-.25 G5 E5 C5 B4 A4-2 F5-.75 F5-.25 E5 C5 D5 C5-3"},
+  {"id": "jingle", "name": "Jingle Bells (điệp khúc)", "icon": "🔔", "level": 3, "bpm": 112,
+   "hint": "Nhiều nốt lặp nhanh — giữ nhịp cho đều nhé.",
+   "notes": "E4 E4 E4-2 E4 E4 E4-2 E4 G4 C4-1.5 D4-.5 E4-4 F4 F4 F4-1.5 F4-.5 F4 E4 E4 E4-.5 E4-.5 E4 D4 D4 E4 D4-2 G4-2 E4 E4 E4-2 E4 E4 E4-2 E4 G4 C4-1.5 D4-.5 E4-4 F4 F4 F4 F4 F4 E4 E4 E4-.5 E4-.5 G4 G4 F4 D4 C4-4"}
+]

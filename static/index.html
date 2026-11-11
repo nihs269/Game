@@ -16,14 +16,11 @@
     </button>
     <div id="online-list" class="ol-list"></div>
   </aside>
+  <!-- Banner quảng cáo: chỉ hiện khi admin đã đặt banner cho vị trí đó -->
+  <aside id="hb-left" class="hb hb-side hb-left" hidden></aside>
+  <aside id="hb-right" class="hb hb-side hb-right" hidden></aside>
   <main class="wrap">
-    <header class="hero">
-      <div class="logo">🎲</div>
-      <div>
-        <h1>Game Hub</h1>
-        <p class="gh-muted">Chọn game, tạo phòng và gửi mã cho bạn bè để cùng chơi.</p>
-      </div>
-    </header>
+    <div id="hb-top" class="hb hb-top" hidden></div>
 
     <section class="card me-card">
       <label for="name">Tên của bạn</label>
@@ -44,6 +41,48 @@
         <input id="code" class="gh-input code-input" maxlength="4" placeholder="ABCD" autocomplete="off" autocapitalize="characters">
         <button class="gh-btn primary" type="submit">Vào phòng</button>
       </form>
+    </section>
+
+    <section class="card code-card">
+      <h2>🔑 Nhập mã</h2>
+      <form id="code-form" class="row">
+        <input id="perk-code" class="gh-input" maxlength="24" placeholder="Nhập mã đặc biệt" autocomplete="off" autocapitalize="characters">
+        <button class="gh-btn primary" type="submit">Dùng mã</button>
+      </form>
+      <div id="code-status" class="code-status" hidden></div>
+    </section>
+
+    <section id="admin" class="card admin-card" hidden>
+      <h2>🛠️ Bảng quản trị</h2>
+      <div id="admin-stats" class="admin-stats"></div>
+      <form id="announce-form" class="row" hidden>
+        <input id="announce-text" class="gh-input" maxlength="200" placeholder="📢 Gửi thông báo tới mọi người…" autocomplete="off">
+        <button class="gh-btn primary" type="submit">Gửi</button>
+      </form>
+      <div id="admin-codes" hidden>
+        <div class="hb-head">
+          <h3>🏷️ Vai trò</h3>
+          <button id="role-create" class="gh-btn primary small" type="button">＋ Tạo vai trò</button>
+        </div>
+        <div id="role-list" class="code-list role-list"></div>
+        <h3>Mã đặc biệt</h3>
+        <form id="newcode-form" class="row">
+          <select id="newcode-role" class="gh-input"></select>
+          <input id="newcode-code" class="gh-input" maxlength="24" placeholder="Mã (để trống = ngẫu nhiên)" autocomplete="off">
+          <input id="newcode-note" class="gh-input" maxlength="60" placeholder="Ghi chú (tuỳ chọn)" autocomplete="off">
+          <button class="gh-btn primary" type="submit">＋ Tạo</button>
+        </form>
+        <div id="code-list" class="code-list"></div>
+      </div>
+      <div id="admin-hb" hidden>
+        <div class="hb-head">
+          <h3>📣 Banner quảng cáo</h3>
+          <button id="hb-create" class="gh-btn primary small" type="button">＋ Tạo banner</button>
+        </div>
+        <p class="gh-muted hb-help">Vị trí nào chưa có banner (hoặc đang tắt, đã hết hạn) thì trang chủ giữ nguyên như bình thường. Một vị trí có nhiều banner thì tự đổi lần lượt. Hai cột bên chỉ hiện trên màn hình rộng. Bấm <b>＋ Tạo banner</b> để thêm banner mới.</p>
+        <div id="hb-list" class="hb-list"></div>
+      </div>
+      <p id="admin-hint" class="gh-muted admin-hint"></p>
     </section>
 
     <h2 class="section-title">Chọn game</h2>

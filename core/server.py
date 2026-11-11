@@ -2,6 +2,7 @@
 import asyncio
 import json
 import logging
+import mimetypes
 import os
 import random
 import re
@@ -13,20 +14,35 @@ import unicodedata
 
 from aiohttp import WSMsgType, web
 
+from core.admin import AD_MEDIA_URL, AD_SLOTS, PERMS, AdminStore
+from core.boardstats import BoardStats
 from core.game_base import GameError
 from core.tls import ensure_cert
 from games import discover_games
+
+# Windows có thể khai sai/thiếu kiểu .webp (ảnh nhân vật) -> trình duyệt nhận nhầm.
+mimetypes.add_type("image/webp", ".webp")
+try:
+    from aiohttp import web_fileresponse
+    web_fileresponse.CONTENT_TYPES.add_type("image/webp", ".webp")
+except Exception:  # pragma: no cover
+    pass
 
 log = logging.getLogger("gamehub")
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR = os.path.join(ROOT, "static")
+ADS_DIR = os.path.join(ROOT, "ads_media")      # ảnh banner quảng cáo admin tải lên
+AD_MAX_BYTES = 2 * 1024 * 1024
 CODE_CHARS = "ABCDEFGHJKLMNPQRSTUVWXYZ23456789"
 EMPTY_ROOM_GRACE = 30           # mọi người mất kết nối → xoá phòng sau 30s (đủ để tải lại trang)
 UNUSED_ROOM_GRACE = 120         # phòng vừa tạo mà chưa ai vào → xoá sau 2 phút
 LOBBY_DISCONNECT_TIMEOUT = 90    # xoá người chơi rớt mạng khỏi phòng chờ sau 90s
 LOBBY_PRESENCE_TTL = 25          # người ở sảnh không điểm danh quá 25s → coi như đã rời
 LOBBY_PRESENCE_MAX = 1000
+AWAY_HIDE = 120                  # tab bị ẩn (chạy nền) quá 2 phút → không hiện trong “Đang hoạt động”
+ROLE_ENTER_QUIET = 60           # người có vai trò rớt mạng / tải lại trong 60s rồi vào lại → không báo lại
+NOTICE_TTL = 60                  # thông báo của admin hiện cho người vào sảnh trong 60s
 BOT_NAMES = ["Tí", "Tèo", "Mận", "Đào", "Sơn", "Hải", "Linh", "Khoa", "Vy", "Quân",
              "Nhi", "Tùng", "Hoa", "Long", "Trang", "Minh", "Yến", "Phát", "Bống", "Cốm"]
 
@@ -68,6 +84,8 @@ class Player:
         self.last_fx = 0.0
         self.voice_on = False
         self.voice_muted = False
+        self.did = None          # mã trình duyệt (chung mọi tab) để gộp trùng trong “Đang hoạt động”
+        self.away_since = None   # lúc tab bị ẩn; None = đang mở xem
 
     @property
     def connected(self):
@@ -215,25 +233,42 @@ class Hub:
         self.games = {g.id: g for g in games}
         self.rooms = {}
         self.lobby = {}  # người đang mở trang sảnh: pid -> {name, look, seen}
+        self.admin = AdminStore(os.path.join(ROOT, "admin.json"))
+        self.board_stats = BoardStats(os.path.join(ROOT, "board_stats.json"))   # lượt xem / click banner
+        self.notice = None  # thông báo gần nhất của admin: {id, message, at}
 
-    def online(self):
+    def online(self, me_did=None):
         """Người thật đang hoạt động: trong phòng (đang kết nối) hoặc đang ở sảnh (điểm danh gần đây)."""
         now = time.time()
         for pid in [k for k, v in self.lobby.items() if now - v["seen"] > LOBBY_PRESENCE_TTL]:
             del self.lobby[pid]
-        out = {}
+        # Gộp các tab của cùng một người (cùng trình duyệt + cùng tên); ưu tiên tab trong phòng, rồi tab đang mở xem.
+        # Tab chạy nền quá AWAY_HIDE giây thì bỏ qua.
+        best = {}
+
+        def offer(pid, did, away_since, entry):
+            if away_since is not None and now - away_since > AWAY_HIDE:
+                return
+            key = (did or pid, entry["name"].lower())
+            rank = (entry["room"] is None, away_since is not None)
+            if key not in best or rank < best[key][0]:
+                best[key] = (rank, dict(entry, me=bool(me_did) and did == me_did))
+
+        seen = set()
         for room in self.rooms.values():
             for p in room.players.values():
-                if p.online_human and p.id not in out:
-                    out[p.id] = {
+                if p.online_human and p.id not in seen:
+                    seen.add(p.id)
+                    offer(p.id, p.did, p.away_since, {
                         "id": p.id, "name": p.name, "look": p.look,
                         "room": {"code": room.code, "game": room.game_cls.id, "gameName": room.game_cls.name,
                                  "icon": room.game_cls.icon, "joinable": room.game.status().get("joinable", True)},
-                    }
+                    })
         for pid, v in self.lobby.items():
-            if pid not in out:
-                out[pid] = {"id": pid, "name": v["name"], "look": v["look"], "room": None}
-        return sorted(out.values(), key=lambda x: (x["room"] is None, x["name"].lower()))[:500]
+            if pid not in seen:
+                offer(pid, v.get("did"), v.get("away_since"), {"id": pid, "name": v["name"], "look": v["look"], "room": None})
+        out = [e for _, e in best.values()]
+        return sorted(out, key=lambda x: (x["room"] is None, x["name"].lower()))[:500]
 
     def create_room(self, game_id):
         game_cls = self.games.get(game_id)
@@ -254,6 +289,29 @@ class Hub:
             room.game.dispose()
             log.info("Đóng phòng %s", code)
 
+    async def force_close_room(self, code):
+        """Admin đóng phòng: báo cho mọi người trong phòng rồi xoá."""
+        room = self.rooms.get(code)
+        if room is None:
+            return False
+        async with room.lock:
+            for p in list(room.players.values()):
+                ws, p.ws = p.ws, None
+                if ws is not None and not ws.closed:
+                    try:
+                        await ws.send_str(_dumps(_fatal("closed", "Phòng đã bị quản trị viên đóng.")))
+                    except Exception:
+                        pass
+                    asyncio.ensure_future(ws.close())
+            self.close_room(code)
+        return True
+
+    async def announce(self, message):
+        self.notice = {"id": f"{random.getrandbits(40):x}", "message": message, "at": time.time()}
+        for room in list(self.rooms.values()):
+            # “announce”: dòng chữ chạy ở trên cùng (P.announce trong platform.js)
+            await room.broadcast({"type": "announce", "id": self.notice["id"], "message": message})
+
     async def join(self, ws, data):
         """Trả về (room, player, lỗi)."""
         code = str(data.get("room", "")).strip().upper()
@@ -265,8 +323,12 @@ class Hub:
             return None, None, _fatal("bad_name", "Vui lòng nhập tên của bạn.")
         pid = str(data.get("pid", ""))[:64] or f"p{random.getrandbits(48):x}"
 
+        role = self.admin.describe(data.get("code"))
         async with room.lock:
             player = room.players.get(pid)
+            # Báo “đã vào phòng” khi mới vào, hoặc quay lại sau khi rời đi khá lâu (không báo khi chỉ tải lại trang).
+            entering = player is None or (player.ws is None and player.disconnected_at is not None
+                                          and time.time() - player.disconnected_at > ROLE_ENTER_QUIET)
             if player is None:
                 same_name = next((p for p in room.players.values() if p.name.lower() == name.lower()), None)
                 if same_name is not None:
@@ -289,6 +351,8 @@ class Hub:
                 if not any(p is not player and p.name.lower() == name.lower() for p in room.players.values()):
                     player.name = name
 
+            player.did = str(data.get("did", ""))[:64] or None
+            player.away_since = time.time() if data.get("away") else None
             old_ws = player.ws
             player.ws = ws
             player.voice_on = False
@@ -309,6 +373,8 @@ class Hub:
             })
             await room.game.on_player_connect(player)
             await room.broadcast_state()
+            if role and entering:
+                await room.broadcast({"type": "announce", "message": f"{role['label']} {player.name} đã vào phòng"})
         return room, player, None
 
     async def remove(self, room, player, kicked=False):
@@ -332,6 +398,7 @@ class Hub:
         while True:
             await asyncio.sleep(5)
             now = time.time()
+            self.board_stats.flush()
             for code, room in list(self.rooms.items()):
                 try:
                     async with room.lock:
@@ -396,6 +463,9 @@ async def ws_handler(request):
 
             if player.ws is not ws:  # đã bị tab khác thay thế
                 break
+            if kind == "away":
+                player.away_since = (player.away_since or time.time()) if data.get("away") else None
+                continue
             room.last_active = time.time()
 
             if kind == "voice":
@@ -491,15 +561,29 @@ async def ws_handler(request):
     return ws
 
 
+def _perms(request):
+    """Quyền của mã mà trình duyệt gửi kèm (header X-GH-Code)."""
+    return request.app["hub"].admin.perms_of(request.headers.get("X-GH-Code", ""))
+
+
 async def api_games(request):
     hub = request.app["hub"]
-    return web.json_response([g.meta() for g in hub.games.values()])
+    see_hidden = "hidden" in _perms(request)
+    out = []
+    for g in hub.games.values():
+        hidden = g.id in hub.admin.hidden
+        if hidden and not see_hidden:
+            continue
+        out.append({**g.meta(), "hidden": hidden})
+    return web.json_response(out)
 
 
 async def api_rooms(request):
     hub = request.app["hub"]
+    see_hidden = "hidden" in _perms(request)
     rooms = sorted(hub.rooms.values(), key=lambda r: -r.last_active)
-    return web.json_response([r.summary() for r in rooms])
+    return web.json_response([r.summary() for r in rooms
+                              if see_hidden or r.game_cls.id not in hub.admin.hidden])
 
 
 async def api_presence(request):
@@ -517,15 +601,20 @@ async def api_presence(request):
     if body.get("leave"):
         hub.lobby.pop(pid, None)
         return web.json_response({"ok": True})
+    notice = hub.notice if hub.notice and time.time() - hub.notice["at"] < NOTICE_TTL else None
     if pid not in hub.lobby and len(hub.lobby) >= LOBBY_PRESENCE_MAX:
-        return web.json_response({"ok": False})
+        return web.json_response({"ok": False, "notice": notice})
+    now = time.time()
+    old = hub.lobby.get(pid)
+    away_since = ((old and old.get("away_since")) or now) if body.get("away") else None
     hub.lobby[pid] = {"name": clean_name(body.get("name")) or "Khách", "look": clean_look(body.get("look")),
-                      "seen": time.time()}
-    return web.json_response({"ok": True})
+                      "seen": now, "did": str(body.get("did", ""))[:64] or None, "away_since": away_since}
+    return web.json_response({"ok": True, "notice": notice})
 
 
 async def api_online(request):
-    return web.json_response(request.app["hub"].online())
+    # ?did= mã trình duyệt của người hỏi → đánh dấu dòng của chính họ (kể cả khi đang chơi ở tab khác)
+    return web.json_response(request.app["hub"].online(request.query.get("did", "")[:64] or None))
 
 
 async def api_room(request):
@@ -543,11 +632,197 @@ async def api_create_room(request):
     except Exception:
         body = {}
     game_id = str((body or {}).get("game", ""))
+    if game_id in hub.admin.hidden and "hidden" not in _perms(request):
+        return web.json_response({"error": "Game không tồn tại."}, status=400)
     try:
         room = hub.create_room(game_id)
     except KeyError:
         return web.json_response({"error": "Game không tồn tại."}, status=400)
     return web.json_response(room.summary())
+
+
+# --------------------------------------------------------------------------- mã đặc quyền / quản trị
+
+async def _body(request):
+    try:
+        body = await request.json()
+    except Exception:
+        body = {}
+    return body if isinstance(body, dict) else {}
+
+
+async def api_redeem(request):
+    """Kiểm tra mã người chơi nhập: trả về loại mã và quyền."""
+    admin = request.app["hub"].admin
+    ip = request.remote or ""
+    if admin.too_many_failures(ip):
+        return web.json_response({"error": "Nhập sai quá nhiều lần, thử lại sau 1 phút."}, status=429)
+    info = admin.describe((await _body(request)).get("code"))
+    if info is None:
+        admin.record_failure(ip)
+        return web.json_response({"error": "Mã không đúng."}, status=403)
+    return web.json_response(info)
+
+
+def _require(request, perm):
+    if perm not in _perms(request):
+        raise web.HTTPForbidden(text=_dumps({"error": "Mã của bạn không có quyền này."}),
+                                content_type="application/json")
+
+
+async def api_admin_overview(request):
+    """Số liệu nhanh cho bảng quản trị."""
+    _require(request, "rooms")
+    hub = request.app["hub"]
+    rooms = list(hub.rooms.values())
+    return web.json_response({
+        "rooms": len(rooms),
+        "players": sum(len(r.humans_online()) for r in rooms),
+        "lobby": len([p for p in hub.online() if p["room"] is None]),
+        "hidden": len(hub.admin.hidden),
+    })
+
+
+async def api_admin_game(request):
+    _require(request, "games")
+    hub = request.app["hub"]
+    body = await _body(request)
+    game_id = str(body.get("game", ""))
+    if game_id not in hub.games:
+        return web.json_response({"error": "Game không tồn tại."}, status=400)
+    hub.admin.set_hidden(game_id, bool(body.get("hidden")))
+    log.info("Admin %s game %s", "ẩn" if body.get("hidden") else "hiện", game_id)
+    return web.json_response({"ok": True})
+
+
+async def api_admin_close_room(request):
+    _require(request, "rooms")
+    hub = request.app["hub"]
+    code = str((await _body(request)).get("code", "")).strip().upper()
+    if not await hub.force_close_room(code):
+        return web.json_response({"error": "Phòng không tồn tại."}, status=404)
+    return web.json_response({"ok": True})
+
+
+async def api_admin_announce(request):
+    _require(request, "announce")
+    message = " ".join(str((await _body(request)).get("message", "")).split())[:200]
+    if not message:
+        return web.json_response({"error": "Hãy nhập nội dung thông báo."}, status=400)
+    await request.app["hub"].announce(message)
+    return web.json_response({"ok": True})
+
+
+async def api_admin_codes(request):
+    """GET: danh sách mã. POST {role, code?, note?} tạo mã (để trống code → mã ngẫu nhiên), {delete: MÃ} xoá."""
+    _require(request, "codes")
+    admin = request.app["hub"].admin
+    created = None
+    if request.method == "POST":
+        body = await _body(request)
+        try:
+            if body.get("delete"):
+                admin.delete_code(body["delete"])
+            else:
+                created = admin.add_code(str(body.get("role", "")), body.get("code", ""), body.get("note", ""))
+        except ValueError as e:
+            return web.json_response({"error": str(e)}, status=400)
+    return web.json_response({"codes": admin.list_codes(), "roles": admin.list_roles(), "created": created})
+
+
+async def api_admin_roles(request):
+    """GET: danh sách vai trò + các quyền. POST {label, icon, perms} tạo; thêm {role} để sửa; {delete: role} xoá."""
+    _require(request, "codes")
+    admin = request.app["hub"].admin
+    if request.method == "POST":
+        body = await _body(request)
+        try:
+            if body.get("delete"):
+                admin.delete_role(str(body["delete"]))
+            else:
+                admin.save_role(body, str(body.get("role") or "") or None)
+        except ValueError as e:
+            return web.json_response({"error": str(e)}, status=400)
+    perms = [{"perm": k, "label": v} for k, v in PERMS.items()]
+    return web.json_response({"roles": admin.list_roles(), "perms": perms, "codes": admin.list_codes()})
+
+
+# --------------------------------------------------------------------------- banner quảng cáo ở trang chủ
+
+async def api_ads(request):
+    """Banner đang chạy: {top|left|right: [{image, link, note}, …]} — vị trí không có thì trang chủ giữ nguyên."""
+    return web.json_response(request.app["hub"].admin.public_ads())
+
+
+async def api_ads_hit(request):
+    """Người xem trang chủ báo một lượt hiển thị / click banner: {id, kind: view|click, did}."""
+    hub = request.app["hub"]
+    body = await _body(request)
+    ad_id = str(body.get("id") or "")
+    if not any(ad["id"] == ad_id for ad in hub.admin.ads):
+        return web.json_response({"ok": False}, status=404)
+    hub.board_stats.hit(ad_id, body.get("kind"), body.get("did"))
+    return web.json_response({"ok": True})
+
+
+def _drop_ad_image(admin, image):
+    """Xoá file ảnh đã tải lên khi không còn banner nào dùng."""
+    if image and image.startswith(AD_MEDIA_URL) and not admin.image_in_use(image):
+        try:
+            os.remove(os.path.join(ADS_DIR, os.path.basename(image)))
+        except OSError:
+            pass
+
+
+async def api_admin_ads(request):
+    """GET: danh sách banner + các vị trí. POST:
+    {slot, image, link, note, until, enabled} tạo banner mới; thêm {id} để sửa;
+    {id, enabled} (không có slot) bật / tắt; {delete: id} xoá."""
+    _require(request, "ads")
+    admin = request.app["hub"].admin
+    if request.method == "POST":
+        body = await _body(request)
+        ad_id = str(body.get("id") or body.get("delete") or "")
+        try:
+            if body.get("delete"):
+                _drop_ad_image(admin, admin.delete_ad(ad_id))
+                request.app["hub"].board_stats.drop(ad_id)
+                log.info("Admin xoá banner %s", ad_id)
+            elif ad_id and "slot" not in body:
+                admin.set_ad_enabled(ad_id, body.get("enabled"))
+            else:
+                ad, old = admin.save_ad(body, ad_id or None)
+                _drop_ad_image(admin, old)
+                log.info("Admin %s banner %s (%s)", "sửa" if ad_id else "tạo", ad["id"], ad["slot"])
+        except ValueError as e:
+            return web.json_response({"error": str(e)}, status=400)
+    slots = [{"slot": k, **v} for k, v in AD_SLOTS.items()]
+    stats = request.app["hub"].board_stats
+    banners = [{**ad, "stats": stats.summary(ad["id"])} for ad in admin.list_ads()]
+    return web.json_response({"banners": banners, "slots": slots})
+
+
+_IMAGE_MAGIC = ((b"\x89PNG\r\n\x1a\n", "png"), (b"\xff\xd8\xff", "jpg"), (b"GIF87a", "gif"), (b"GIF89a", "gif"))
+
+
+async def api_admin_ads_upload(request):
+    """Tải ảnh banner lên: thân yêu cầu là nguyên file ảnh (PNG / JPG / GIF / WebP, tối đa 2 MB)."""
+    _require(request, "ads")
+    data = await request.read()
+    if not data:
+        return web.json_response({"error": "Chưa có file ảnh."}, status=400)
+    if len(data) > AD_MAX_BYTES:
+        return web.json_response({"error": "Ảnh quá lớn (tối đa 2 MB)."}, status=400)
+    ext = next((e for magic, e in _IMAGE_MAGIC if data.startswith(magic)), None)
+    if ext is None and data[:4] == b"RIFF" and data[8:12] == b"WEBP":
+        ext = "webp"
+    if ext is None:
+        return web.json_response({"error": "Chỉ nhận ảnh PNG, JPG, GIF hoặc WebP."}, status=400)
+    os.makedirs(ADS_DIR, exist_ok=True)
+    name = f"{int(time.time())}-{random.randrange(16 ** 6):06x}.{ext}"
+    with open(os.path.join(ADS_DIR, name), "wb") as f:
+        f.write(data)
+    return web.json_response({"url": AD_MEDIA_URL + name})
 
 
 # --------------------------------------------------------------------------- giọng đọc tiếng Việt
@@ -711,7 +986,7 @@ async def no_cache(request, handler):
 def make_app(port):
     games = discover_games()
     hub = Hub(games)
-    app = web.Application(middlewares=[no_cache])
+    app = web.Application(middlewares=[no_cache], client_max_size=AD_MAX_BYTES + 64 * 1024)
     app["hub"] = hub
     app["port"] = port
 
@@ -728,7 +1003,24 @@ def make_app(port):
     app.router.add_get("/api/tts", api_tts)
     app.router.add_post("/api/presence", api_presence)
     app.router.add_get("/api/online", api_online)
+    app.router.add_post("/api/code", api_redeem)
+    app.router.add_get("/api/admin/overview", api_admin_overview)
+    app.router.add_post("/api/admin/game", api_admin_game)
+    app.router.add_post("/api/admin/close-room", api_admin_close_room)
+    app.router.add_post("/api/admin/announce", api_admin_announce)
+    app.router.add_get("/api/admin/codes", api_admin_codes)
+    app.router.add_post("/api/admin/codes", api_admin_codes)
+    app.router.add_get("/api/admin/roles", api_admin_roles)
+    app.router.add_post("/api/admin/roles", api_admin_roles)
+    app.router.add_get("/api/board", api_ads)
+    app.router.add_post("/api/board/hit", api_ads_hit)
+    app.router.add_get("/api/admin/board", api_admin_ads)
+    app.router.add_post("/api/admin/board", api_admin_ads)
+    app.router.add_post("/api/admin/board/upload", api_admin_ads_upload)
     app.router.add_static("/static/", STATIC_DIR)
+    os.makedirs(ADS_DIR, exist_ok=True)
+    app.router.add_static(AD_MEDIA_URL, ADS_DIR)
+    # Đường dẫn API / ảnh banner không chứa chữ “ads” — trình chặn quảng cáo sẽ chặn nếu có.
 
     for game in games:
         def make_index(g):
@@ -750,6 +1042,7 @@ def make_app(port):
 
     async def stop_cleanup(app_):
         app_["cleanup"].cancel()
+        hub.board_stats.flush(force=True)
 
     app.on_startup.append(start_cleanup)
     app.on_cleanup.append(stop_cleanup)
@@ -790,6 +1083,8 @@ def run(host="0.0.0.0", port=8080, https=False, https_port=None):
         print(" 🎲 GAME HUB đã sẵn sàng!")
         print(f"   Game: {', '.join(g.name for g in games) or '(chưa có)'}")
         print(f"   Máy này:      http://localhost:{port}")
+        admin_codes = [c for c, i in app["hub"].admin.codes.items() if i["role"] == "admin"]
+        print(f"   🔑 Mã admin:   {', '.join(admin_codes)}  (nhập ở sảnh; quản lý mã trong admin.json)")
         for ip in ips:
             print(f"   Bạn bè (LAN): http://{ip}:{port}")
         if bound_https:

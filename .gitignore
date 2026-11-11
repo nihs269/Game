@@ -18,3 +18,14 @@ games/noitu/custom.txt
 
 # Nhật ký
 *.log
+
+# Mã đặc quyền và game bị ẩn (có mã admin — không đưa lên git)
+admin.json
+admin.json.tmp
+
+# Ảnh banner quảng cáo do admin tải lên
+ads_media/
+
+# Thống kê lượt xem / click banner
+board_stats.json
+board_stats.json.tmp

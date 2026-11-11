@@ -247,10 +247,13 @@
     const cnt = seats.length;
     const meIdx = Math.max(0, seats.findIndex((p) => p.id === S.me.id));
     const pos = {};
+    // Bàn hẹp: kéo ghế hai bên vào trong để ghế không lòi ra khỏi màn hình.
+    const half = (($('#seats .seat') || {}).offsetWidth || 112) / 2 + 2;
+    const rx = Math.min(44, 50 - (100 * half) / Math.max(1, $('#table').clientWidth));
     seats.forEach((p, i) => {
       const rel = (i - meIdx + cnt) % cnt;
       const a = Math.PI / 2 + (rel * 2 * Math.PI) / cnt;
-      pos[p.id] = { x: 50 + 44 * Math.cos(a), y: 50 + 41 * Math.sin(a) };
+      pos[p.id] = { x: 50 + rx * Math.cos(a), y: 50 + 41 * Math.sin(a) };
     });
     const inPlay = S.phase === 'play';
     const html = S.players.map((p) => {
@@ -315,19 +318,21 @@
           const v = Math.max(o.minTo, Math.min(o.maxTo, Math.round(to)));
           return `<button class="gh-btn small preset" data-preset="${v}">${label}</button>`;
         };
-        const raiseWord = o.currentBet ? 'Tố lên' : 'Cược';
-        const raise = o.canRaise ? (o.minTo >= o.maxTo
-          ? btn('allin', `🔥 All-in ${num(o.maxTo)}`, 'allin')
-          : `<div class="raise-box">
+        const raiseWord = o.currentBet ? 'Tố<span class="lg"> lên</span>' : 'Cược';
+        // Hàng nút chính (cùng cỡ) + hàng chọn mức tố bên dưới.
+        const slider = o.canRaise && o.minTo < o.maxTo;
+        const raise = !o.canRaise ? ''
+          : slider ? btn('raise', `<i class="ic">💰 </i>${raiseWord} <span class="raise-label">${num(ui.raiseTo)}</span>`, 'raise opener') + btn('allin', '<i class="ic">🔥 </i>All-in', 'allin')
+            : btn('allin', `<i class="ic">🔥 </i>All-in ${num(o.maxTo)}`, 'allin');
+        const raiseBox = slider ? `<div class="raise-box">
               <input type="range" id="raise-range" min="${o.minTo}" max="${o.maxTo}" step="${Math.max(1, Math.round(S.bb / 2))}" value="${ui.raiseTo}">
               <input type="number" id="raise-num" min="${o.minTo}" max="${o.maxTo}" value="${ui.raiseTo}">
               ${preset('Min', o.minTo)}${preset('½ Pot', o.currentBet + potAfter / 2)}${preset('Pot', o.currentBet + potAfter)}
-              ${btn('raise', `💰 ${raiseWord} <span id="raise-label">${num(ui.raiseTo)}</span>`, 'raise')}
-              ${btn('allin', '🔥 All-in', 'allin small')}</div>`) : '';
-        const call = o.canCheck ? btn('check', '👀 Xem', 'call')
-          : btn('call', o.toCall >= S.me.chips ? `🔥 Theo all-in ${num(o.toCall)}` : `✅ Theo ${num(o.toCall)}`, 'call');
+              ${btn('raise', `💰 ${raiseWord} <span class="raise-label">${num(ui.raiseTo)}</span>`, 'raise confirm')}</div>` : '';
+        const call = o.canCheck ? btn('check', '<i class="ic">👀 </i>Xem', 'call')
+          : btn('call', o.toCall >= S.me.chips ? `<i class="ic">🔥 </i>Theo<span class="lg"> all-in</span> ${num(o.toCall)}` : `<i class="ic">✅ </i>Theo ${num(o.toCall)}`, 'call');
         html = `<div class="msg-main">👉 Lượt của bạn<small>${o.toCall ? `Cần ${num(o.toCall)} chip để theo · pot ${num(S.pot)}` : 'Chưa ai cược thêm — bạn có thể Xem hoặc Cược.'}</small></div>
-          <div class="acts">${btn('fold', '🏳️ Bỏ bài', 'fold')}${call}${raise}</div>`;
+          <div class="acts">${btn('fold', '<i class="ic">🏳️ </i>Bỏ bài', 'fold')}${call}${raise}</div>${raiseBox}`;
       } else if (S.stage === 'waiting') {
         html = '<div class="msg-main">⏳ Đang chờ ít nhất 2 người có chip và đang kết nối…</div>';
       } else if (S.result) {
@@ -344,7 +349,8 @@
       }
       if (S.me.host) html += btn('stop', '🛑 Kết thúc ván', 'ghost small');
     }
-    el.className = 'bar' + (mine ? ' myturn' : '');
+    if (!mine) ui.raiseOpen = false;
+    el.className = 'bar' + (mine ? ' myturn' : '') + (ui.raiseOpen ? ' raise-open' : '');
     setHTML(el, html);
   }
 
@@ -357,7 +363,7 @@
     const won = res && res.payouts && res.payouts[S.me.id];
     const html = `<div class="cards">${me.cards.map((c) => cardHTML(c, `big ${best ? (best.has(c) ? 'hi' : 'dim') : ''}`)).join('')}</div>
       <div class="info"><div class="hname">${me.folded ? '🏳️ Đã bỏ bài' : esc(S.myHand || '')}</div>
-      <div class="mychips">🪙 ${num(me.chips)} chip${me.bet ? ` · đang cược ${num(me.bet)}` : ''}${me.allin ? ' · 🔥 ALL-IN' : ''}</div>
+      <div class="mychips"><span class="nb">🪙 ${num(me.chips)} chip</span>${me.bet ? ` · <span class="nb">đang cược ${num(me.bet)}</span>` : ''}${me.allin ? ' · <span class="nb">🔥 ALL-IN</span>' : ''}</div>
       ${won ? `<div class="mychips">🏆 Thắng ${num(won)} chip!</div>` : ''}</div>`;
     const el = $('#hand');
     el.classList.toggle('folded', !!me.folded);
@@ -547,17 +553,37 @@
     if (ring) ring.style.strokeDashoffset = String(207.3 * (1 - frac));
   }
   setInterval(tick, 250);
+  window.addEventListener('resize', () => { if (S) renderTable(); });
 
   // ---------------------------------------------------------------- sự kiện
   function setRaise(v) {
     const o = S && S.options;
     if (!o) return;
     ui.raiseTo = Math.max(o.minTo, Math.min(o.maxTo, Math.round(Number(v) || o.minTo)));
-    const range = $('#raise-range'); const box = $('#raise-num'); const label = $('#raise-label');
+    const range = $('#raise-range'); const box = $('#raise-num');
     if (range) range.value = ui.raiseTo;
     if (box && document.activeElement !== box) box.value = ui.raiseTo;
-    if (label) label.textContent = num(ui.raiseTo);
+    document.querySelectorAll('.raise-label').forEach((l) => { l.textContent = num(ui.raiseTo); });
   }
+  // Màn hình chật: khung chọn mức tố là ô bật lên trên thanh nút (CSS đặt position: absolute), bấm “Tố” để mở / đóng.
+  const raisePopup = () => { const b = $('#bar .raise-box'); return !!b && getComputedStyle(b).position === 'absolute'; };
+  function setRaiseOpen(open) {
+    ui.raiseOpen = open;
+    $('#bar').classList.toggle('raise-open', open);
+  }
+
+  // Bàn co theo chiều cao còn lại của màn hình (trừ thanh trên cùng, bài tẩy và thanh nút) để không phải cuộn.
+  // Lấy chiều cao thanh nút lớn nhất đã gặp ở bề rộng hiện tại để bàn không co giãn qua lại mỗi lượt.
+  const fit = { w: 0, dock: 0 };
+  function fitTable() {
+    if (window.innerWidth !== fit.w) { fit.w = window.innerWidth; fit.dock = 0; }
+    fit.dock = Math.max(fit.dock, $('.dock').offsetHeight);
+    document.body.style.setProperty('--top-h', $('.topbar').offsetHeight + 'px');
+    document.body.style.setProperty('--dock-h', fit.dock + 'px');
+  }
+  new ResizeObserver(fitTable).observe($('.dock'));
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && ui.raiseOpen) setRaiseOpen(false); });
+  window.addEventListener('resize', fitTable);
 
   document.addEventListener('input', (e) => {
     if (e.target.id === 'raise-range') setRaise(e.target.value);
@@ -576,6 +602,7 @@
   document.addEventListener('click', async (e) => {
     const pre = e.target.closest('[data-preset]');
     if (pre) { setRaise(pre.dataset.preset); return; }
+    if (ui.raiseOpen && !e.target.closest('.raise-box, .opener')) setRaiseOpen(false);
 
     const actEl = e.target.closest('[data-act]');
     if (actEl && !actEl.disabled && actEl.dataset.act) {
@@ -590,7 +617,10 @@
           break;
         case 'check': send('move', { move: 'check' }); break;
         case 'call': send('move', { move: 'call' }); break;
-        case 'raise': send('move', { move: 'raise', to: ui.raiseTo }); break;
+        case 'raise':
+          if (actEl.classList.contains('opener') && raisePopup()) { setRaiseOpen(!ui.raiseOpen); break; }
+          send('move', { move: 'raise', to: ui.raiseTo });
+          break;
         case 'allin': send('move', { move: 'allin' }); break;
         case 'rebuy': send('rebuy'); break;
         case 'stop':

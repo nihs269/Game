@@ -510,7 +510,7 @@ body.t-day .sc-sparks { display: none; }
 }
 .tab-body { flex: 1; display: flex; flex-direction: column; min-height: 0; }
 .tab-body[hidden] { display: none; }
-.chat-list, .log-list, .roles-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.chat-list, .log-list { flex: 1; overflow-y: auto; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
 .msg { font-size: 14px; line-height: 1.45; word-wrap: break-word; animation: rise .2s ease; }
 .msg .who { font-weight: 700; margin-right: 6px; }
 .msg .ch { font-size: 10px; font-weight: 700; padding: 1px 6px; border-radius: 6px; margin-right: 6px; vertical-align: 1px; }
@@ -534,13 +534,26 @@ body.t-day .sc-sparks { display: none; }
 .log-item.night { color: var(--accent-2); font-weight: 600; }
 .log-item.end { font-weight: 700; background: rgba(62, 207, 142, .12); }
 .log-item .lt { font-size: 11px; color: var(--muted); margin-right: 6px; }
-.role-card { display: flex; gap: 12px; padding: 12px; border-radius: 12px; background: rgba(255, 255, 255, .04); }
-.role-card .ri { font-size: 30px; }
-.role-card b { display: block; margin-bottom: 3px; }
-.role-card .tm { font-size: 11px; font-weight: 700; margin-left: 6px; padding: 1px 7px; border-radius: 99px; background: rgba(62, 207, 142, .2); color: #a8f0cf; }
-.role-card .tm.wolf { background: rgba(255, 93, 108, .25); color: #ffc2c8; }
-.role-card p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
-.role-card .cnt { margin-left: auto; font-weight: 800; color: var(--accent-2); }
+/* Thanh vai trò dưới khung cảnh */
+.roles-bar { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
+.roles-bar:empty { display: none; }
+.rchip {
+  position: relative; display: flex; align-items: center; gap: 4px; padding: 5px 12px 5px 8px; border-radius: 99px;
+  background: var(--card); border: 1px solid var(--line); cursor: help; outline: none;
+}
+.rchip.wolf { border-color: rgba(255, 93, 108, .45); }
+.rchip .ri { font-size: 22px; line-height: 1; }
+.rchip > b { font-weight: 800; color: var(--accent-2); }
+.rtip {
+  display: none; position: absolute; z-index: 50; bottom: calc(100% + 8px); left: 50%; transform: translateX(-50%);
+  width: 240px; padding: 10px 12px; border-radius: 12px; background: var(--panel-solid); border: 1px solid var(--line);
+  box-shadow: var(--shadow); pointer-events: none;
+}
+.rchip:hover .rtip, .rchip:focus .rtip { display: block; }
+.rtip b { display: block; margin-bottom: 3px; }
+.rtip .tm { font-size: 11px; font-weight: 700; margin-left: 6px; padding: 1px 7px; border-radius: 99px; background: rgba(62, 207, 142, .2); color: #a8f0cf; }
+.rtip .tm.wolf { background: rgba(255, 93, 108, .25); color: #ffc2c8; }
+.rtip p { margin: 0; font-size: 13px; color: var(--muted); line-height: 1.5; }
 .empty-note { color: var(--muted); text-align: center; font-size: 13px; padding: 20px 0; }
 
 /* ---------- Lá bài vai trò ---------- */

@@ -100,10 +100,10 @@ button, input, select { font-family: inherit; }
 .av-svg { display: block; width: 100%; height: auto; overflow: visible; }
 .av-ec, .av-ew, .av-mo, .av-md, .av-tears { display: none; }
 .av-arm { transform-box: view-box; transition: transform .35s cubic-bezier(.3, 1.4, .5, 1); }
-.av-arm-l { transform-origin: 26px 77px; }
-.av-arm-r { transform-origin: 74px 77px; }
+.av-arm-l { transform-origin: 38.4px 75.7px; }
+.av-arm-r { transform-origin: 61.6px 75.7px; }
 .av-body { transform-box: view-box; transform-origin: 50px 140px; }
-.av-head { transform-box: view-box; transform-origin: 50px 70px; }
+.av-head { transform-box: view-box; transform-origin: 50px 72px; }
 
 .av-editor { display: grid; grid-template-columns: 170px 1fr; gap: 16px; align-items: start; }
 .av-preview { display: flex; flex-direction: column; align-items: center; gap: 10px; }

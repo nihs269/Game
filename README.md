@@ -211,6 +211,62 @@ Chuỗi trò mini phản xạ nhanh & trí nhớ, **mọi người chơi cùng l
 - Đề khó dần theo vòng (dãy dài hơn, lưới to hơn, phép tính lớn hơn). Phím tắt: Space cho vòng ⚡, 1–4 chọn đáp án.
 - Chủ phòng chỉnh: số vòng (7–20), tốc độ (thường / nhanh), độ khó bot. Chơi một mình để luyện cũng được.
 
+## ⭕ Khoanh Số (1–12 người)
+
+Tờ giấy in lộn xộn các số từ 1 đến N (chủ phòng chọn 20 / 30 / 50 / 75 / 100). **Mọi người cùng lúc** tìm và khoanh số
+**theo thứ tự** 1 → 2 → 3… — ai bấm trúng số đang cần trước thì số đó được khoanh bằng **màu bút của người đó**.
+Hết số (hoặc hết giờ), ai khoanh được nhiều số nhất thì thắng.
+
+- Bấm nhầm số chưa tới lượt bị khoá bút 1,5 giây. Quá 20 giây chưa ai tìm ra thì số cần tìm phát sáng nhẹ để gợi ý.
+- Tờ giấy do máy chủ tạo nên ai cũng thấy giống nhau, và chỉ hiện ra khi bắt đầu (đếm ngược 3 giây) để không ai dò trước.
+  Trên điện thoại màn hình dọc, tờ giấy tự xoay dọc cho dễ nhìn.
+- Chủ phòng chỉnh: số lượng số, giới hạn thời gian (không / 3 / 5 / 10 phút), độ khó bot.
+
+## 🔫 Chiến Binh Tí Hon (2–10 người)
+
+Bắn súng nhìn ngang, đánh nhau **thời gian thực** trên bản đồ nhiều tầng bục. Ba chế độ:
+**Đấu Đơn** (ai cũng là địch, hạ đủ số mạng thì thắng) · **Đấu Đội** (Đỏ ⚔️ Xanh, đội nào hạ đủ số mạng trước thắng) ·
+**Cướp Cờ** (mang cờ địch về căn cứ nhà khi cờ nhà còn ở chỗ để ghi điểm).
+
+- Điều khiển: A/D chạy · W/Space nhảy · S rơi xuống khỏi bục · chuột ngắm, giữ chuột trái bắn · G / chuột phải ném lựu đạn ·
+  E đổi súng nằm dưới chân. Điện thoại: nút trên màn hình, chạm giữ vào bản đồ để bắn; có nút ⛶ toàn màn hình.
+- **Nhặt đồ**: súng rải trên bản đồ (tiểu liên, shotgun, bắn tỉa, rocket, laser xuyên người), hộp cứu thương, áo giáp,
+  lựu đạn. Bị hạ thì rơi súng đang cầm ra cho người khác nhặt. Hồi sinh sau 3 giây.
+- Trình duyệt tự mô phỏng nhân vật của mình nên chạy nhảy không trễ; đạn, sát thương, nhặt đồ và cờ do máy chủ tính.
+- Chủ phòng chỉnh: chế độ, bản đồ (Công Trường / Rừng Tre), thời gian, điểm để thắng, độ khó bot. Người chơi tự chọn đội
+  trong phòng chờ; chủ phòng chuyển đội cho bot được.
+
+## 🏎️ Đua Xe Gõ Phím (1–8 người)
+
+Cả phòng gõ **cùng một đoạn văn tiếng Việt** (ca dao, tục ngữ, đoạn văn ngắn); mỗi từ gõ đúng giúp xe tiến lên, ai
+**về đích trước** thắng chặng. Về nhất 10 điểm, nhì 8, ba 6, rồi 5 · 4 · 3 · 2 · 1; người đầu tiên về đích thì những
+người còn lại chỉ còn 25 giây. Hết các chặng, tổng điểm cao nhất thắng (bằng điểm xét WPM trung bình).
+
+- Gõ đúng cả từ + dấu cách mới qua từ; sai thì ô gõ đỏ. Chế độ **có dấu** dùng bộ gõ tiếng Việt (Unikey, Telex/VNI):
+  dấu chưa kịp đặt không bị tính sai, nhưng phải đủ dấu mới qua từ. Chế độ **không dấu** cho máy không có bộ gõ.
+- Đèn xuất phát 3‑2‑1 (đọc trước đoạn văn trong lúc chờ), hiện WPM · độ chính xác · tiến độ trực tiếp; không dán được.
+- **🔥 Nitro**: gõ liền 10 từ không sai thì nạp 1 bình, bấm **Tab** (hoặc nút 🔥) để trong 4 giây mỗi chữ gõ đúng đẩy xe
+  đi xa gấp rưỡi — có thể về đích trước khi gõ hết đoạn văn (WPM chỉ tính phần đã thật sự gõ). Máy chủ tự đếm chuỗi và
+  quãng thưởng. Bot cũng biết dùng nitro.
+- **💨 Bốc khói**: đang gõ sai thì xe khựng lại, xì khói đen — cả phòng đều thấy (bot gõ nhầm cũng vậy).
+- Tiến độ gửi bằng tin nhắn nhẹ `{"type": "duaxe"}` 10 lần/giây thay vì cả trạng thái; máy chủ chặn tiến độ nhanh bất thường.
+- Chủ phòng chỉnh: số chặng (1/3/5), độ dài đoạn văn, có dấu / không dấu, độ khó bot (25 → 95 WPM).
+  Kho đoạn văn ở `games/duaxe/texts.py`.
+
+## 💞 Hiểu Ý Nhau (2–12 người)
+
+Đố nhau xem hiểu bạn bè tới đâu. Mỗi vòng là một trong hai kiểu:
+
+- **🤝 Tâm Đầu Ý Hợp** — câu hỏi chung cho 2 người (*“Màu yêu thích của bạn?”*): mỗi người tự trả lời về mình, giống nhau
+  thì cả hai +150. Những người còn lại đoán trước hai người **giống** hay **khác** (+50 nếu đúng).
+- **🎯 Hiểu Bạn Đến Đâu** — câu hỏi về 1 người: người đó bí mật trả lời, cả phòng đoán (*“Món ăn mà Khoa thích nhất là gì?”*).
+  Đoán đúng +100, người được hỏi +50 cho mỗi người đoán đúng mình.
+- Câu có lựa chọn thì bấm chọn; câu gõ tự do thì máy so gần đúng (bỏ dấu, hoa thường, “phở” ≈ “phở bò”), rồi **người được hỏi
+  tự chấm** lại ai đoán đúng; kiểu cặp đôi mà gõ không khớp thì cả hai cùng bấm “Tính là giống” mới được tính.
+- Vài câu có đáp án là chính bạn bè trong phòng (*“Trong nhóm, Khoa thân với ai nhất?”*). Cuối ván có bảng **ai hiểu ai nhất**
+  và **cặp tâm đầu ý hợp**. Kho 62 câu hỏi ở `games/hieuy/questions.py`.
+- Chủ phòng chỉnh: số vòng, kiểu câu hỏi (trộn / chỉ cặp đôi / chỉ một người). Bot trả lời ngẫu nhiên, thỉnh thoảng đoán trúng ý.
+
 ## 🎨 Vẽ Đoán (2–12 người)
 
 Lần lượt từng người **vẽ** (chọn 1 trong 3 từ dễ · vừa · khó), cả phòng **đoán** qua ô Đoán. Đoán đúng càng sớm càng
@@ -236,6 +292,64 @@ trò chuyện vừa **bỏ phiếu** loại một người; người bị loại
 - Kho 76 cặp từ (`games/giandiep/words.py`, mỗi từ kèm gợi ý cho bot). Bot mô tả bằng gợi ý, nghi người mô tả không khớp,
   biết “trà trộn” theo số đông khi nghi mình là gián điệp, bỏ qua câu mô tả nó không hiểu; bị lộ thì đoán từ của dân.
 - Chủ phòng chỉnh: thời gian mô tả và bỏ phiếu, độ khó bot. Nên chơi từ 4 người (3 người thì gián điệp rất có lợi).
+
+## ⚓ Hải Chiến — bắn tàu (2 người, có người xem)
+
+Mỗi người giấu hạm đội trên lưới rồi lần lượt phóng tên lửa vào vùng biển đối phương. Trúng thì (mặc định) được bắn
+tiếp; bắn trúng hết các ô của một tàu thì tàu chìm và lộ hình. Đánh chìm toàn bộ hạm đội địch trước thì thắng.
+
+- **Cổ điển**: 10×10, 5 tàu thẳng (tàu sân bay 5 · thiết giáp hạm 4 · tuần dương hạm 3 · tàu ngầm 3 · khu trục hạm 2).
+- **Tuỳ chỉnh**: bản đồ 8×8 / 10×10 / 12×12 / 14×14 (bản đồ to thì nhiều tàu hơn) với hạm đội **tàu thẳng** hoặc **đa hình**
+  — pháo đài nổi 2×2, căn cứ nổi, tàu chữ L, T, Z, xuồng góc chữ V… (định nghĩa trong `games/haichien/fleet.py`).
+- Xếp tàu: chọn tàu ở bến rồi bấm lên lưới, bấm tàu đã đặt để nhấc lên, phím **R** để xoay 90°, hoặc **Xếp ngẫu nhiên**.
+  Hết giờ xếp thì máy xếp hộ; hết giờ lượt bắn thì máy bắn hộ.
+- Đồ hoạ: mặt biển có ánh nắng loang chuyển động, tàu SVG chi tiết theo loại (bọt mũi tàu, vệt sóng đuôi, tháp pháo, bãi
+  trực thăng, container…), tên lửa bay vòng cung kèm vệt khói; trúng thì chớp sáng + cầu lửa + mảnh văng + khói rồi cháy
+  âm ỉ; trượt thì cột nước phụt lên + giọt bắn + vòng sóng; tàu chìm thì nổ dây chuyền, nghiêng chìm và sủi bọt.
+- Đấu với máy: bot dễ bắn ngẫu nhiên, bot vừa săn theo ô bàn cờ rồi dò quanh chỗ trúng, bot khó dùng bản đồ xác suất
+  (tính mọi hướng xoay của các tàu còn lại).
+- Chủ phòng chỉnh: chế độ & cỡ bản đồ & hình dạng tàu, trúng được bắn tiếp, không đặt tàu sát nhau, thời gian, độ khó bot.
+
+## 🐦 Flappy Đại Chiến — sinh tồn + vật phẩm (1–8 người)
+
+Cả phòng cùng bay qua **một dãy ống giống nhau** (chim người khác hiện mờ). Đâm ống / rơi xuống đất là bị loại,
+**người trụ lại cuối cùng** thắng. Càng về sau ống càng hẹp, bay càng nhanh. Vỗ cánh: chuột / chạm / Space / ↑ / W.
+
+- **Vật phẩm**: hộp **?** giữa các ống, ai chạm trước được (giữ tối đa 1, dùng bằng **E** / Shift / nút trên màn hình):
+  🌫️ Sương mù (màn hình đối thủ tối mịt) · 🔄 Đảo ngược trọng lực · 🪨 Tạ nặng (rơi nhanh) · 🧱 Ống hẹp ·
+  ⚡ Sét đánh (hất mọi đối thủ chúi xuống) · 🛡️ Khiên (đỡ 1 lần va chạm). Vật phẩm đánh một người trúng ngẫu nhiên một đối thủ còn bay.
+- **🍅 Cà chua**: người đã rơi (và người xem) bấm vào chim còn bay để ném, làm bẩn màn hình họ 3 giây (6 giây một quả).
+- Đồng bộ: trình duyệt tự mô phỏng chim của mình (không trễ) và gửi vị trí ~15 lần/giây; máy chủ chọn đường bay, phân xử
+  hộp vật phẩm, mô phỏng bot và phát vị trí của mọi người. Chơi qua Internet thì chim người khác trễ hơn một chút.
+- **Bot** bay bằng vật lý thật, thỉnh thoảng “run tay” (càng về sau càng dễ run, trúng vật phẩm càng run), nhặt và dùng vật phẩm.
+- Chủ phòng chỉnh: bật/tắt vật phẩm, bật/tắt cà chua, độ khó bot. Chơi một mình để luyện cũng được.
+
+## 🐉 Võ Đài Sinh Tử — đối kháng kiểu Mortal Kombat 4 (1–8 người, đấu 1 chọi 1)
+
+Hai võ sĩ đấu nhiều hiệp: đánh cạn máu (K.O.) hoặc hết giờ còn nhiều máu
+hơn thì thắng hiệp. Phòng đông người: **người thắng giữ võ đài**, người thua xuống cuối hàng chờ, những người khác xem.
+
+- Điều khiển: A/D đi · W nhảy · S ngồi · J đấm · K đá · L đỡ (điện thoại có nút trên màn hình). Ngồi + đấm = móc hàm,
+  ngồi + đá = quét chân, lùi + đá = roundhouse, sát người + tiến + đấm = quật (không đỡ được), trên không = đá bay.
+- **Đồ hoạ 3D kiểu MK4** (Three.js, kèm sẵn trong `games/vodai/static/vendor/` nên chơi LAN không cần Internet):
+  ánh sáng PBR + tone mapping ACES + bóng đổ thật, sàn đấu phối cảnh + đèn viền màu; HUD và hiệu ứng vẽ 2D đè lên.
+  Võ sĩ là **model người có khung xương** (ma-nơ-canh Quaternius, CC0) tô màu trang phục + phụ kiện riêng từng người;
+  đấm / trúng đòn / ngã / tung chưởng dùng animation mocap, các đòn khác xoay xương theo nhịp ra đòn (co gối, xoay hông…).
+  Có thể thay bằng model riêng (GLB) cho từng võ sĩ — xem `games/vodai/static/models/README.md`.
+- Giao diện & nhịp trận theo MK4: màn CHOOSE YOUR FIGHTER, màn VS, ROUND 1 / FIGHT!, FINISH HIM / FINISH HER,
+  FLAWLESS VICTORY, “… WINS” (giọng xướng ngôn tiếng Anh), thanh máu MK4 + huy hiệu rồng, camera zoom theo hai võ sĩ,
+  4 sàn đấu (Đền Máu, Rừng Tre Đêm, Hang Lửa, The Pit).
+- **Chọn võ sĩ** (ở phòng chờ / giữa các trận) trong dàn Mortal Kombat 4: Scorpion, Sub-Zero, Raiden, Liu Kang, Reptile,
+  Sonya Blade, Jax, Johnny Cage, Kai, Tanya, Jarek, Reiko, Fujin, Quan Chi, Shinnok, Noob Saibot — ngoại hình vẽ lại
+  bằng hình khối, mỗi người **3 tuyệt chiêu riêng** (↓→J / U, ←→J / I, →→K / O): chưởng (ngồi xuống là né được),
+  🪝 móc câu kéo đối thủ lại, ❄️ cầu băng đóng băng, 🌀 dịch chuyển ra sau lưng, lao tới (phi cước, đá xe đạp, trượt chân, húc vai).
+- **💀 Kết liễu**: hiệp quyết định thắng bằng K.O. → “KẾT LIỄU ĐI!”, lại gần bấm F trong 6 giây: móc hàm hất lên trời,
+  gọi sét đánh thành tro hoặc thiêu rụi.
+- Đồng bộ: trình duyệt tự mô phỏng võ sĩ của mình và báo trúng đòn; máy chủ kiểm tra khoảng cách / nhịp ra đòn / đỡ đòn,
+  trừ máu, mô phỏng chưởng và bot, phát vị trí 30 lần/giây. Võ sĩ mất kết nối quá 10 giây bị xử thua.
+- **🥋 Luyện tập** (chơi một mình được): đối thủ tập đứng yên / ngồi / luôn đỡ / nhảy liên tục / đánh trả, chọn được võ sĩ;
+  máu vô hạn, không giới hạn giờ, danh sách chiêu, thống kê combo, nút thử kết liễu. Không tính thắng thua, không đổi hàng chờ.
+- Chủ phòng chỉnh: số hiệp cần thắng (1/2/3), thời gian hiệp (45/60/90 giây), bật/tắt kết liễu, độ khó bot.
 
 ## ♠️ Poker — Texas Hold'em (2–9 người)
 
@@ -267,6 +381,20 @@ Cả phòng cùng xem bói trong một “lều xem bói”. Mỗi lượt một
   Xem xong mà có người đang chờ thì sau 60 giây tự chuyển lượt.
 - Chỉ mang tính giải trí 🙂
 
+## 🎼 Lớp Nhạc Cụ (1–12 người)
+
+Học chơi **sáo trúc (sáo Đô 6 lỗ)**, **piano** và **violin** ngay trên trình duyệt — âm thanh tổng hợp bằng WebAudio,
+không cần tải file. Mỗi người tự chọn nhạc cụ.
+
+- **Phòng tập**: ai đàn gì cả phòng đều nghe thấy để hoà tấu; khuông nhạc khoá Sol hiện các nốt vừa chơi.
+- **Học bài**: 7 bài (thang âm, Ngôi sao nhỏ, Chú cừu nhỏ, Kìa con bướm vàng, Khúc hoan ca, Chúc mừng sinh nhật,
+  Jingle Bells). **Nghe mẫu**, **Chờ nốt** (bài chỉ chạy tiếp khi chơi đúng) hoặc **Theo nhịp** (50/75/100%). Nốt kế
+  tiếp kèm hướng dẫn: phím đàn, thế bấm sáo ●○ hoặc dây + ngón violin. Xong bài được chấm 1–3 ⭐.
+- **Thi tài**: chủ phòng chọn bài, cả phòng chơi theo nhịp, điểm cập nhật trực tiếp. **Đoán nốt**: nghe Đô chuẩn rồi
+  một nốt bí ẩn, chơi lại đúng nốt đó — nhanh thì thêm điểm.
+- Chỉ cần đúng tên nốt, quãng tám nào cũng được. Nút 🔤 đổi cách ghi nốt Đô Rê Mi ↔ C D E.
+- Danh sách bài ở `games/nhaccu/static/songs.json` (mỗi nốt dạng `C4`, `G4-2`, `E4-.5` = tên nốt + số phách).
+
 ## Cấu trúc & thêm game mới
 
 ```
@@ -291,6 +419,7 @@ games/
   cotyphu/              # Cờ Tỷ Phú (kiểu Business Tour): game.py (luật), bots.py (AI), static/ (board.json = 32 ô)
   cangua/               # Cờ Cá Ngựa: game.py (luật), bots.py (AI), static/ (bàn cờ lưới 17×17)
   tarot/                # Bói Tarot: game.py (luật), static/ (giao diện + cards.json = 78 lá)
+  nhaccu/               # Lớp Nhạc Cụ: game.py (phòng, thi), static/ (synth.js = âm thanh, songs.json = bài học)
 ```
 
 Thêm game mới: tạo `games/<ten_game>/` gồm `__init__.py` (export `GAME`), lớp kế thừa

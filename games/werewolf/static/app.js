@@ -712,20 +712,18 @@
     if (setHTML(list, html)) list.scrollTop = list.scrollHeight;
   }
 
+  // Thanh vai trò dưới khung cảnh: chỉ hiện biểu tượng + số lượng, rê chuột (hoặc chạm) mới hiện chi tiết.
+  // Phòng chờ đã có bảng chỉnh vai nên không hiện thanh này.
   function renderRoles() {
     const comp = S.composition || {};
-    const html = `<div class="gh-muted" style="font-size:13px">Các vai trò ${S.phase === 'lobby' ? 'dự kiến' : ''} trong ván này:</div>` +
-      S.roleOrder.map((r) => {
-        const info = S.roleInfo[r];
-        const c = comp[r] || 0;
-        return `<div class="role-card" style="${c ? '' : 'opacity:.45'}"><div class="ri">${info.icon}</div><div>
-          <b>${esc(info.name)}<span class="tm ${info.team === 'wolf' ? 'wolf' : ''}">${info.team === 'wolf' ? 'Phe Sói' : 'Phe Dân'}</span></b>
-          <p>${esc(info.desc)}</p></div><div class="cnt">×${c}</div></div>`;
-      }).join('') +
-      `<div class="role-card"><div class="ri">📋</div><div><b>Luật cơ bản</b><p>
-        Đêm: Sói chọn người để cắn, các vai đặc biệt dùng năng lực. Ngày: công bố người chết, thảo luận rồi bỏ phiếu treo cổ
-        (hoà phiếu thì không ai chết). Dân thắng khi hết Sói; Sói thắng khi số Sói ≥ số người còn lại.</p></div></div>`;
-    setHTML($('#roles-list'), html);
+    const html = S.phase === 'lobby' ? '' : S.roleOrder.filter((r) => comp[r]).map((r) => {
+      const info = S.roleInfo[r];
+      const wolf = info.team === 'wolf';
+      return `<div class="rchip ${wolf ? 'wolf' : ''}" tabindex="0"><span class="ri">${info.icon}</span><b>×${comp[r]}</b>
+        <div class="rtip"><b>${esc(info.name)}<span class="tm ${wolf ? 'wolf' : ''}">${wolf ? 'Phe Sói' : 'Phe Dân'}</span></b>
+        <p>${esc(info.desc)}</p></div></div>`;
+    }).join('');
+    setHTML($('#roles-bar'), html);
   }
 
   // ---------------------------------------------------------------- đồng hồ

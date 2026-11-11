@@ -756,10 +756,10 @@ class WerewolfGame(WerewolfBotMixin, BaseGame):
                 return {"kind": "sleep", "text": f"Bạn đang canh giữ cho {who}."}
             return {"kind": "sleep"}
         if ph == "witch":
-            if role == "witch" and not n["witch_done"] and (self.potions["heal"] or self.potions["poison"]):
+            can_heal = self.potions["heal"] and n["victim"] is not None
+            if role == "witch" and not n["witch_done"] and (can_heal or self.potions["poison"]):
                 return {"kind": "witch", "victim": n["victim"],
-                        "canHeal": self.potions["heal"] and n["victim"] is not None,
-                        "canPoison": self.potions["poison"], "targets": others}
+                        "canHeal": can_heal, "canPoison": self.potions["poison"], "targets": others}
             return {"kind": "sleep"}
         if ph == "day":
             return {"kind": "discuss", "ready": pid in self.ready}
