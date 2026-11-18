@@ -1,0 +1,13 @@
+Create ONE image: the cover art for the game "Reflex Party" on a casual multiplayer browser game website where Vietnamese friends play together.
+
+SCENE (must explain the game at a glance, showing a moment of actual gameplay):
+Chibi players slamming big glowing arcade buttons at the same moment, lightning bolts, a stopwatch, colorful shapes and a memory card grid flying around.
+
+COLOR MOOD: electric yellow and purple. Saturated but not neon, slightly darker toward the bottom edge so it sits nicely on a dark navy website.
+
+RULES:
+- LANDSCAPE 1536x1024 (3:2), full-bleed illustration filling the whole canvas: no border, no frame, no rounded corners, no margin.
+- Keep everything important inside the central 80% of the image (edges may be cropped slightly on small screens).
+- Style: cute, colorful, glossy 3D cartoon like modern mobile game key art, soft lighting, clean shapes, bold readable silhouettes that still read clearly when the image is shown about 300 pixels wide. People, when present, are cute chibi characters with big heads and varied looks.
+- ABSOLUTELY NO text, letters, numbers, logos, watermarks or UI elements.
+- Original artwork only: do not copy any existing game's logo, characters, card designs or branding.

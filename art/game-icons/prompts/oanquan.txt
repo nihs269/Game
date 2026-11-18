@@ -1,0 +1,13 @@
+Create ONE image: the cover art for the game "O An Quan (Vietnamese mandarin square game)" on a casual multiplayer browser game website where Vietnamese friends play together.
+
+SCENE (must explain the game at a glance, showing a moment of actual gameplay):
+Two Vietnamese kids playing the traditional mandarin square capturing game drawn on the ground in a village courtyard: a row of square pits with small pebbles and two big half-moon end pits with large stones, one kid sowing pebbles one by one.
+
+COLOR MOOD: earthy beige and terracotta. Saturated but not neon, slightly darker toward the bottom edge so it sits nicely on a dark navy website.
+
+RULES:
+- LANDSCAPE 1536x1024 (3:2), full-bleed illustration filling the whole canvas: no border, no frame, no rounded corners, no margin.
+- Keep everything important inside the central 80% of the image (edges may be cropped slightly on small screens).
+- Style: cute, colorful, glossy 3D cartoon like modern mobile game key art, soft lighting, clean shapes, bold readable silhouettes that still read clearly when the image is shown about 300 pixels wide. People, when present, are cute chibi characters with big heads and varied looks.
+- ABSOLUTELY NO text, letters, numbers, logos, watermarks or UI elements.
+- Original artwork only: do not copy any existing game's logo, characters, card designs or branding.

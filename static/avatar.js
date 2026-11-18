@@ -89,6 +89,7 @@
     return `<filter id="${fid}" x="0" y="0" width="1" height="1" color-interpolation-filters="sRGB"><feColorMatrix type="matrix" values="${k(n >> 16)} 0 0 0 0 0 ${k((n >> 8) & 255)} 0 0 0 0 0 ${k(n & 255)} 0 0 0 0 0 1 0"/></filter>`;
   }
 
+  // opts.armsFront: vẽ tay trước thân và đầu (game có động tác giơ tay / vỗ tay / chống cằm, tay không bị che).
   function svg(look, opts = {}) {
     const L = sanitize(look, opts.seed);
     const id = 'a' + (++uid);
@@ -113,7 +114,7 @@
     const body = opts.head ? '' : `
       <g class="av-seat"><rect x="17" y="113" width="66" height="15" rx="7.5" fill="#7a5230" stroke="#3a2a22" stroke-width="1.4"/><ellipse cx="18" cy="120.5" rx="4.5" ry="7.5" fill="#b07a4c" stroke="#3a2a22" stroke-width="1.2"/><path d="M28 118h20M52 123h22" stroke="#5c3b20" stroke-width="1.4"/></g>
       <g transform="translate(0 ${drop})">${hairBack}</g>${PART[`outfit-${o}-back`] ? '' : img('neck')}${o === 'suit' ? '' : img('legs')}${L.shoes === 'sandal' ? img('feet') : ''}${img('shoes-' + L.shoes + (o === 'suit' ? '-low' : ''))}${o === 'tshirt' || o === 'hoodie' ? img('pants-shorts') : ''}
-      ${arm('l')}${arm('r')}${PART[`outfit-${o}-back`] ? img(`outfit-${o}-back`) + img('neck-long') : ''}${img('outfit-' + o)}`;
+      ${opts.armsFront ? '' : arm('l') + arm('r')}${PART[`outfit-${o}-back`] ? img(`outfit-${o}-back`) + img('neck-long') : ''}${img('outfit-' + o)}`;
     const face = `<g class="av-eo">${img('face-eyes-open')}</g>
       <g class="av-ec"><path d="M35.8 48.2 Q39.3 44.6 42.8 48.2 M57.2 48.2 Q60.7 44.6 64.2 48.2" fill="none" stroke="#3a2a22" stroke-width="1.5" stroke-linecap="round"/><ellipse cx="38.6" cy="53.4" rx="2.6" ry="1.4" fill="#ff8fa3" opacity=".55"/><ellipse cx="61.4" cy="53.4" rx="2.6" ry="1.4" fill="#ff8fa3" opacity=".55"/></g>
       <g class="av-ew">${img('face-eyes-angry')}</g>
@@ -122,7 +123,7 @@
     const head = `<g transform="translate(0 ${drop})"><g class="av-head">${opts.head ? hairBack : ''}${img('head')}${face}${hairFront}${L.acc === 'glasses' ? glasses(L.accColor) : L.acc !== 'none' ? img('acc-' + L.acc + '-lens') + img('acc-' + L.acc) : ''}</g></g>`;
     const vb = !opts.head ? '0 -16 100 166' : TALL_HATS.includes(L.acc) ? '3 -32 94 106' : '9 -16 82 90';
     const inner = `${opts.head ? '' : '<ellipse class="av-shadow" cx="50" cy="142.5" rx="24" ry="3.8" fill="rgba(0,0,0,.3)"/>'}
-      <g class="av-body">${body}${head}</g>`;
+      <g class="av-body">${body}${head}${opts.armsFront && !opts.head ? arm('l') + arm('r') : ''}</g>`;
     const C = { skin: L.skin, hairColor: L.hairColor, outfitColor: L.outfitColor, pants: L.pants, shoeColor: L.shoeColor, accColor: L.accColor };
     const defs = [...used].map((k) => tintFilter(id + k, C[k])).join('') +
       (hm ? `<mask id="${id}hm" maskUnits="userSpaceOnUse" x="-50" y="-100" width="200" height="300"><rect x="-50" y="-100" width="200" height="300" fill="#fff"/><path d="${hm}" fill="#000"/></mask>` : '');

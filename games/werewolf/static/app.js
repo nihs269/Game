@@ -649,7 +649,7 @@
         ${select('night_time', '🌙 Thời gian ban đêm')}${select('discussion_time', '🗣️ Thời gian thảo luận')}${select('vote_time', '⚖️ Thời gian bỏ phiếu')}
         <label class="switch"><input type="checkbox" data-cfg="reveal_on_death" ${cfg.reveal_on_death ? 'checked' : ''} ${host ? '' : 'disabled'}> <span>Lộ vai trò khi chết<small>Tắt: cả người đã chết cũng không xem được vai người khác</small></span></label>
       </div></div>
-      <div class="panel">${start}</div></div>`);
+      <div class="panel start-dock">${start}</div></div>`);
   }
 
   function botPanel() {

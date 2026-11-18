@@ -343,15 +343,12 @@ body.t-day .sc-sparks { display: none; }
 }
 @keyframes sc-rope { 0% { transform: scaleY(0); } 20% { transform: scaleY(1); } 85% { opacity: 1; } 100% { transform: scaleY(1) translateY(-25%); opacity: 0; } }
 
-/* Tay: giơ tay, chỉ trỏ, vẫy */
-.char.raise .av-arm-r { transform: rotate(-165deg); }
-.char.point-r .av-arm-r { transform: rotate(-100deg); }
-.char.point-l .av-arm-l { transform: rotate(100deg); }
+/* Tay: vẫy */
 .char.aim .av-arm-r { transform: rotate(-95deg); }
 .char.aim .av-arm-l { transform: rotate(-60deg); }
 .char.waving .av-arm-r { animation: ch-wave .35s ease-in-out infinite alternate; }
-@keyframes ch-wave { from { transform: rotate(-160deg); } to { transform: rotate(-115deg); } }
-.char.think .av-arm-l { transform: rotate(-150deg); }
+@keyframes ch-wave { from { transform: rotate(-135deg); } to { transform: rotate(-100deg); } }
+.char.think .av-arm-l { transform: rotate(-110deg); }   /* tay chạm cằm */
 .char.clap .av-arm-l { animation: ch-clapl .2s ease-in-out infinite alternate; }
 .char.clap .av-arm-r { animation: ch-clapr .2s ease-in-out infinite alternate; }
 @keyframes ch-clapl { from { transform: rotate(-20deg); } to { transform: rotate(-55deg); } }
@@ -378,11 +375,11 @@ body.t-day .sc-sparks { display: none; }
 .char.sad-end .av-head { transform: rotate(6deg) translateY(3px); }
 .char.dance .ch-fig { animation: ch-dance .45s ease-in-out infinite alternate; transform-origin: 50% 95%; }
 .char.dance .av-arm-r { animation: ch-wave .45s ease-in-out infinite alternate; }
-.char.dance .av-arm-l { transform: rotate(150deg); }
+.char.dance .av-arm-l { transform: rotate(125deg); }
 @keyframes ch-dance { from { transform: rotate(-9deg) translateY(0); } to { transform: rotate(9deg) translateY(-6%); } }
 .char.cheer:not(.dead) .ch-fig { animation: ch-hop .7s ease infinite; }
-.char.cheer:not(.dead) .av-arm-r { transform: rotate(-160deg); }
-.char.cheer:not(.dead) .av-arm-l { transform: rotate(160deg); }
+.char.cheer:not(.dead) .av-arm-r { transform: rotate(-125deg); }
+.char.cheer:not(.dead) .av-arm-l { transform: rotate(125deg); }
 .char.blush .ch-fig { filter: drop-shadow(0 0 8px #ff7bb0); }
 .ch-hold { position: absolute; right: -4%; top: 52%; font-size: 1.6em; display: none; animation: ch-pop .3s ease; pointer-events: none; }
 .char.holdflower .ch-hold { display: block; }

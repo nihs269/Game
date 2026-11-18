@@ -71,13 +71,13 @@
     const games = await api('/api/games');
     const box = $('#games');
     box.innerHTML = games.map((g) => `
-      <article class="game ${g.hidden ? 'is-hidden' : ''}">
+      <article class="game ${g.cover ? 'has-cover' : ''} ${g.hidden ? 'is-hidden' : ''}">
         ${g.hidden ? '<span class="hidden-badge">🙈 Đang ẩn</span>' : ''}
         ${can('games') ? `<button class="gh-btn small game-toggle" data-toggle="${g.id}" data-hidden="${g.hidden ? 1 : 0}">
           ${g.hidden ? '👁 Hiện' : '🙈 Ẩn'}</button>` : ''}
-        <div class="icon">${g.icon}</div>
+        ${g.cover ? `<img class="cover" src="${P.esc(g.cover)}" alt="" loading="lazy">` : `<div class="icon">${g.icon}</div>`}
         <h3>${P.esc(g.name)}</h3>
-        <p>${P.esc(g.description)}</p>
+        ${g.cover ? '<div class="grow"></div>' : `<p>${P.esc(g.description)}</p>`}
         <div class="meta">👥 ${g.minPlayers}–${g.maxPlayers} người chơi</div>
         <div class="game-actions">
           <button class="gh-btn ghost" data-guide="${g.id}">📖 Hướng dẫn</button>
@@ -819,8 +819,8 @@
         : '🏠 Đang ở sảnh';
       const attrs = u.room && !mine ? `data-room="${P.esc(u.room.code)}" data-game="${P.esc(u.room.game)}" title="Vào phòng ${P.esc(u.room.code)}"` : '';
       return `<div class="ol-row ${mine ? 'me' : ''}" ${attrs}>
-        <div class="ol-ava">${Avatar.svg(u.look, { head: true, seed: u.id })}<i class="dot"></i></div>
-        <div class="ol-info"><b>${P.esc(u.name)}${mine ? ' (bạn)' : ''}</b><span>${where}</span></div></div>`;
+        <div class="ol-ava">${Avatar.svg(u.look, { head: true, seed: u.id })}<i class="dot ${u.away ? 'away' : ''}"></i></div>
+        <div class="ol-info"><b>${P.esc(u.name)}${mine ? ' (bạn)' : ''}</b><span>${u.away ? '💤 Tạm vắng · ' : ''}${where}</span></div></div>`;
     }).join('') : '<div class="empty">Chưa có ai.</div>';
     if (html !== onlineHTML) {  // chỉ vẽ lại khi có thay đổi để không làm nhảy vị trí cuộn
       onlineHTML = html;

@@ -40,7 +40,7 @@ UNUSED_ROOM_GRACE = 120         # phòng vừa tạo mà chưa ai vào → xoá 
 LOBBY_DISCONNECT_TIMEOUT = 90    # xoá người chơi rớt mạng khỏi phòng chờ sau 90s
 LOBBY_PRESENCE_TTL = 25          # người ở sảnh không điểm danh quá 25s → coi như đã rời
 LOBBY_PRESENCE_MAX = 1000
-AWAY_HIDE = 120                  # tab bị ẩn (chạy nền) quá 2 phút → không hiện trong “Đang hoạt động”
+AWAY_HIDE = 120                  # tab bị ẩn (chạy nền) quá 2 phút → vẫn hiện trong “Đang hoạt động” nhưng đánh dấu tạm vắng
 ROLE_ENTER_QUIET = 60           # người có vai trò rớt mạng / tải lại trong 60s rồi vào lại → không báo lại
 NOTICE_TTL = 60                  # thông báo của admin hiện cho người vào sảnh trong 60s
 BOT_NAMES = ["Tí", "Tèo", "Mận", "Đào", "Sơn", "Hải", "Linh", "Khoa", "Vy", "Quân",
@@ -243,16 +243,15 @@ class Hub:
         for pid in [k for k, v in self.lobby.items() if now - v["seen"] > LOBBY_PRESENCE_TTL]:
             del self.lobby[pid]
         # Gộp các tab của cùng một người (cùng trình duyệt + cùng tên); ưu tiên tab trong phòng, rồi tab đang mở xem.
-        # Tab chạy nền quá AWAY_HIDE giây thì bỏ qua.
+        # Tab chạy nền quá AWAY_HIDE giây vẫn hiện, kèm cờ away (tạm vắng); tab đang mở xem được ưu tiên.
         best = {}
 
         def offer(pid, did, away_since, entry):
-            if away_since is not None and now - away_since > AWAY_HIDE:
-                return
+            away = away_since is not None and now - away_since > AWAY_HIDE
             key = (did or pid, entry["name"].lower())
-            rank = (entry["room"] is None, away_since is not None)
+            rank = (away, entry["room"] is None, away_since is not None)
             if key not in best or rank < best[key][0]:
-                best[key] = (rank, dict(entry, me=bool(me_did) and did == me_did))
+                best[key] = (rank, dict(entry, me=bool(me_did) and did == me_did, away=away))
 
         seen = set()
         for room in self.rooms.values():
@@ -574,7 +573,11 @@ async def api_games(request):
         hidden = g.id in hub.admin.hidden
         if hidden and not see_hidden:
             continue
-        out.append({**g.meta(), "hidden": hidden})
+        cover = os.path.join(STATIC_DIR, "covers", g.id + ".webp")   # ảnh bìa (art/game-icons/build_covers.py)
+        meta = {**g.meta(), "hidden": hidden}
+        if os.path.exists(cover):
+            meta["cover"] = f"/static/covers/{g.id}.webp?v={int(os.path.getmtime(cover))}"
+        out.append(meta)
     return web.json_response(out)
 
 

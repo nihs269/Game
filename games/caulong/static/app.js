@@ -942,7 +942,7 @@
         : '<div class="start-row"><span class="gh-muted">⏳ Đang chờ chủ phòng bắt đầu…</span></div>';
       html = `<div class="panel"><h3>📨 Mời bạn bè</h3><div class="invite"><div class="bigcode">${ROOM}</div><div class="link">${esc(inviteLink())}</div>
           ${btn('copy-link', '⧉ Sao chép link', 'small')} ${btn('edit-look', '👗 Đổi nhân vật', 'small')}</div></div>
-        ${host ? botPanel() : ''}${settingsPanel()}${S.players.length > need ? queuePanel() : ''}${keysPanel()}<div class="panel">${start}</div>`;
+        ${host ? botPanel() : ''}${settingsPanel()}${S.players.length > need ? queuePanel() : ''}${keysPanel()}<div class="panel start-dock">${start}</div>`;
     }
     setHTML(el, html);
   }

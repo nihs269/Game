@@ -10,7 +10,7 @@
     heart: { emoji: '❤️', throw: true, impact: 'hearts' },
     flower: { emoji: '🌹', throw: true, impact: 'flower' },
     tomato: { emoji: '🍅', throw: true, impact: 'splat' },
-    highfive: { emoji: '✋', throw: true, impact: 'five', self: 'raise', ms: 900 },
+    highfive: { emoji: '✋', throw: true, impact: 'five' },
     poke: { emoji: '👉', throw: true, impact: 'poke' },
     laugh: { emoji: '😂', self: 'bounce', ms: 1500 },
     angry: { emoji: '😡', self: 'angry', ms: 1800 },
@@ -118,18 +118,12 @@
       if (!this.seats.has(p.id)) this.seats.set(p.id, this.makeSeat(p.id));
       const s = this.seats.get(p.id);
       const lk = JSON.stringify(p.look || null);
-      if (s.lookKey !== lk) { s.fig.innerHTML = A.svg(p.look, { seed: p.id }); s.lookKey = lk; }
+      if (s.lookKey !== lk) { s.fig.innerHTML = A.svg(p.look, { seed: p.id, armsFront: true }); s.lookKey = lk; }
 
       const me = p.id === S.me.id;
       const dead = inGame && !p.alive;
       const team = p.role && S.roleInfo[p.role] ? S.roleInfo[p.role].team : null;
       const wolfeyes = night && !dead && iWolf && p.role === 'werewolf';
-      const myVote = (S.votes && (S.phase === 'vote' || S.phase === 'verdict') && S.votes[p.id]) ||
-        (S.wolfVotes && S.wolfVotes[p.id]);
-      let pointDir = null;
-      if (myVote && myVote !== 'skip' && this.pos.get(myVote) && this.pos.get(p.id)) {
-        pointDir = this.pos.get(myVote).x < this.pos.get(p.id).x ? 'l' : 'r';
-      }
       const c = s.char.classList;
       const set = (cls, on) => c.toggle(cls, !!on);
       set('me', me);
@@ -142,9 +136,6 @@
       set('selected', ctx.selected === p.id);
       set('poison', ctx.selected === p.id && mode && mode.kind === 'poison');
       set('victim', S.victim === p.id);
-      set('raise', !dead && p.ready && (S.phase === 'day' || S.phase === 'reveal'));
-      set('point-l', pointDir === 'l');
-      set('point-r', pointDir === 'r');
       set('cheer', S.phase === 'end' && team && team === S.winner);
       set('sad-end', S.phase === 'end' && team && team !== S.winner);
       set('aim', S.phase === 'hunter' && S.hunter === p.id);

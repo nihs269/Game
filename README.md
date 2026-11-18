@@ -253,20 +253,6 @@ người còn lại chỉ còn 25 giây. Hết các chặng, tổng điểm cao 
 - Chủ phòng chỉnh: số chặng (1/3/5), độ dài đoạn văn, có dấu / không dấu, độ khó bot (25 → 95 WPM).
   Kho đoạn văn ở `games/duaxe/texts.py`.
 
-## 💞 Hiểu Ý Nhau (2–12 người)
-
-Đố nhau xem hiểu bạn bè tới đâu. Mỗi vòng là một trong hai kiểu:
-
-- **🤝 Tâm Đầu Ý Hợp** — câu hỏi chung cho 2 người (*“Màu yêu thích của bạn?”*): mỗi người tự trả lời về mình, giống nhau
-  thì cả hai +150. Những người còn lại đoán trước hai người **giống** hay **khác** (+50 nếu đúng).
-- **🎯 Hiểu Bạn Đến Đâu** — câu hỏi về 1 người: người đó bí mật trả lời, cả phòng đoán (*“Món ăn mà Khoa thích nhất là gì?”*).
-  Đoán đúng +100, người được hỏi +50 cho mỗi người đoán đúng mình.
-- Câu có lựa chọn thì bấm chọn; câu gõ tự do thì máy so gần đúng (bỏ dấu, hoa thường, “phở” ≈ “phở bò”), rồi **người được hỏi
-  tự chấm** lại ai đoán đúng; kiểu cặp đôi mà gõ không khớp thì cả hai cùng bấm “Tính là giống” mới được tính.
-- Vài câu có đáp án là chính bạn bè trong phòng (*“Trong nhóm, Khoa thân với ai nhất?”*). Cuối ván có bảng **ai hiểu ai nhất**
-  và **cặp tâm đầu ý hợp**. Kho 62 câu hỏi ở `games/hieuy/questions.py`.
-- Chủ phòng chỉnh: số vòng, kiểu câu hỏi (trộn / chỉ cặp đôi / chỉ một người). Bot trả lời ngẫu nhiên, thỉnh thoảng đoán trúng ý.
-
 ## 🎨 Vẽ Đoán (2–12 người)
 
 Lần lượt từng người **vẽ** (chọn 1 trong 3 từ dễ · vừa · khó), cả phòng **đoán** qua ô Đoán. Đoán đúng càng sớm càng
@@ -310,47 +296,6 @@ tiếp; bắn trúng hết các ô của một tàu thì tàu chìm và lộ hì
   (tính mọi hướng xoay của các tàu còn lại).
 - Chủ phòng chỉnh: chế độ & cỡ bản đồ & hình dạng tàu, trúng được bắn tiếp, không đặt tàu sát nhau, thời gian, độ khó bot.
 
-## 🐦 Flappy Đại Chiến — sinh tồn + vật phẩm (1–8 người)
-
-Cả phòng cùng bay qua **một dãy ống giống nhau** (chim người khác hiện mờ). Đâm ống / rơi xuống đất là bị loại,
-**người trụ lại cuối cùng** thắng. Càng về sau ống càng hẹp, bay càng nhanh. Vỗ cánh: chuột / chạm / Space / ↑ / W.
-
-- **Vật phẩm**: hộp **?** giữa các ống, ai chạm trước được (giữ tối đa 1, dùng bằng **E** / Shift / nút trên màn hình):
-  🌫️ Sương mù (màn hình đối thủ tối mịt) · 🔄 Đảo ngược trọng lực · 🪨 Tạ nặng (rơi nhanh) · 🧱 Ống hẹp ·
-  ⚡ Sét đánh (hất mọi đối thủ chúi xuống) · 🛡️ Khiên (đỡ 1 lần va chạm). Vật phẩm đánh một người trúng ngẫu nhiên một đối thủ còn bay.
-- **🍅 Cà chua**: người đã rơi (và người xem) bấm vào chim còn bay để ném, làm bẩn màn hình họ 3 giây (6 giây một quả).
-- Đồng bộ: trình duyệt tự mô phỏng chim của mình (không trễ) và gửi vị trí ~15 lần/giây; máy chủ chọn đường bay, phân xử
-  hộp vật phẩm, mô phỏng bot và phát vị trí của mọi người. Chơi qua Internet thì chim người khác trễ hơn một chút.
-- **Bot** bay bằng vật lý thật, thỉnh thoảng “run tay” (càng về sau càng dễ run, trúng vật phẩm càng run), nhặt và dùng vật phẩm.
-- Chủ phòng chỉnh: bật/tắt vật phẩm, bật/tắt cà chua, độ khó bot. Chơi một mình để luyện cũng được.
-
-## 🐉 Võ Đài Sinh Tử — đối kháng kiểu Mortal Kombat 4 (1–8 người, đấu 1 chọi 1)
-
-Hai võ sĩ đấu nhiều hiệp: đánh cạn máu (K.O.) hoặc hết giờ còn nhiều máu
-hơn thì thắng hiệp. Phòng đông người: **người thắng giữ võ đài**, người thua xuống cuối hàng chờ, những người khác xem.
-
-- Điều khiển: A/D đi · W nhảy · S ngồi · J đấm · K đá · L đỡ (điện thoại có nút trên màn hình). Ngồi + đấm = móc hàm,
-  ngồi + đá = quét chân, lùi + đá = roundhouse, sát người + tiến + đấm = quật (không đỡ được), trên không = đá bay.
-- **Đồ hoạ 3D kiểu MK4** (Three.js, kèm sẵn trong `games/vodai/static/vendor/` nên chơi LAN không cần Internet):
-  ánh sáng PBR + tone mapping ACES + bóng đổ thật, sàn đấu phối cảnh + đèn viền màu; HUD và hiệu ứng vẽ 2D đè lên.
-  Võ sĩ là **model người có khung xương** (ma-nơ-canh Quaternius, CC0) tô màu trang phục + phụ kiện riêng từng người;
-  đấm / trúng đòn / ngã / tung chưởng dùng animation mocap, các đòn khác xoay xương theo nhịp ra đòn (co gối, xoay hông…).
-  Có thể thay bằng model riêng (GLB) cho từng võ sĩ — xem `games/vodai/static/models/README.md`.
-- Giao diện & nhịp trận theo MK4: màn CHOOSE YOUR FIGHTER, màn VS, ROUND 1 / FIGHT!, FINISH HIM / FINISH HER,
-  FLAWLESS VICTORY, “… WINS” (giọng xướng ngôn tiếng Anh), thanh máu MK4 + huy hiệu rồng, camera zoom theo hai võ sĩ,
-  4 sàn đấu (Đền Máu, Rừng Tre Đêm, Hang Lửa, The Pit).
-- **Chọn võ sĩ** (ở phòng chờ / giữa các trận) trong dàn Mortal Kombat 4: Scorpion, Sub-Zero, Raiden, Liu Kang, Reptile,
-  Sonya Blade, Jax, Johnny Cage, Kai, Tanya, Jarek, Reiko, Fujin, Quan Chi, Shinnok, Noob Saibot — ngoại hình vẽ lại
-  bằng hình khối, mỗi người **3 tuyệt chiêu riêng** (↓→J / U, ←→J / I, →→K / O): chưởng (ngồi xuống là né được),
-  🪝 móc câu kéo đối thủ lại, ❄️ cầu băng đóng băng, 🌀 dịch chuyển ra sau lưng, lao tới (phi cước, đá xe đạp, trượt chân, húc vai).
-- **💀 Kết liễu**: hiệp quyết định thắng bằng K.O. → “KẾT LIỄU ĐI!”, lại gần bấm F trong 6 giây: móc hàm hất lên trời,
-  gọi sét đánh thành tro hoặc thiêu rụi.
-- Đồng bộ: trình duyệt tự mô phỏng võ sĩ của mình và báo trúng đòn; máy chủ kiểm tra khoảng cách / nhịp ra đòn / đỡ đòn,
-  trừ máu, mô phỏng chưởng và bot, phát vị trí 30 lần/giây. Võ sĩ mất kết nối quá 10 giây bị xử thua.
-- **🥋 Luyện tập** (chơi một mình được): đối thủ tập đứng yên / ngồi / luôn đỡ / nhảy liên tục / đánh trả, chọn được võ sĩ;
-  máu vô hạn, không giới hạn giờ, danh sách chiêu, thống kê combo, nút thử kết liễu. Không tính thắng thua, không đổi hàng chờ.
-- Chủ phòng chỉnh: số hiệp cần thắng (1/2/3), thời gian hiệp (45/60/90 giây), bật/tắt kết liễu, độ khó bot.
-
 ## ♠️ Poker — Texas Hold'em (2–9 người)
 
 Mỗi người 2 lá tẩy + 5 lá chung trên bàn (lật dần qua **Flop · Turn · River**), ghép 5 lá tốt nhất. Có tiền
@@ -381,20 +326,6 @@ Cả phòng cùng xem bói trong một “lều xem bói”. Mỗi lượt một
   Xem xong mà có người đang chờ thì sau 60 giây tự chuyển lượt.
 - Chỉ mang tính giải trí 🙂
 
-## 🎼 Lớp Nhạc Cụ (1–12 người)
-
-Học chơi **sáo trúc (sáo Đô 6 lỗ)**, **piano** và **violin** ngay trên trình duyệt — âm thanh tổng hợp bằng WebAudio,
-không cần tải file. Mỗi người tự chọn nhạc cụ.
-
-- **Phòng tập**: ai đàn gì cả phòng đều nghe thấy để hoà tấu; khuông nhạc khoá Sol hiện các nốt vừa chơi.
-- **Học bài**: 7 bài (thang âm, Ngôi sao nhỏ, Chú cừu nhỏ, Kìa con bướm vàng, Khúc hoan ca, Chúc mừng sinh nhật,
-  Jingle Bells). **Nghe mẫu**, **Chờ nốt** (bài chỉ chạy tiếp khi chơi đúng) hoặc **Theo nhịp** (50/75/100%). Nốt kế
-  tiếp kèm hướng dẫn: phím đàn, thế bấm sáo ●○ hoặc dây + ngón violin. Xong bài được chấm 1–3 ⭐.
-- **Thi tài**: chủ phòng chọn bài, cả phòng chơi theo nhịp, điểm cập nhật trực tiếp. **Đoán nốt**: nghe Đô chuẩn rồi
-  một nốt bí ẩn, chơi lại đúng nốt đó — nhanh thì thêm điểm.
-- Chỉ cần đúng tên nốt, quãng tám nào cũng được. Nút 🔤 đổi cách ghi nốt Đô Rê Mi ↔ C D E.
-- Danh sách bài ở `games/nhaccu/static/songs.json` (mỗi nốt dạng `C4`, `G4-2`, `E4-.5` = tên nốt + số phách).
-
 ## Cấu trúc & thêm game mới
 
 ```
@@ -419,7 +350,6 @@ games/
   cotyphu/              # Cờ Tỷ Phú (kiểu Business Tour): game.py (luật), bots.py (AI), static/ (board.json = 32 ô)
   cangua/               # Cờ Cá Ngựa: game.py (luật), bots.py (AI), static/ (bàn cờ lưới 17×17)
   tarot/                # Bói Tarot: game.py (luật), static/ (giao diện + cards.json = 78 lá)
-  nhaccu/               # Lớp Nhạc Cụ: game.py (phòng, thi), static/ (synth.js = âm thanh, songs.json = bài học)
 ```
 
 Thêm game mới: tạo `games/<ten_game>/` gồm `__init__.py` (export `GAME`), lớp kế thừa

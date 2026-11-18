@@ -162,3 +162,12 @@ button, input, select { font-family: inherit; }
   border: 7px solid transparent; border-top-color: #fff;
 }
 .gh-say.show { transform: translate(-50%, -100%) scale(1); opacity: 1; }
+
+/* Phòng chờ: khung nút "Bắt đầu" luôn nổi ở mép dưới màn hình, không phải kéo xuống.
+   Khung bao (#panel / #lobby) dùng display: contents để nút bám theo cả cột .stage
+   (sticky chỉ chạy trong phạm vi thẻ cha) — kể cả khi bàn chơi ở trên còn chiếm hết màn hình. */
+.stage :has(.start-dock) { display: contents; }
+.panel.start-dock {
+  position: sticky; bottom: 12px; z-index: 40;
+  box-shadow: 0 -6px 24px rgba(0, 0, 0, .35);
+}
